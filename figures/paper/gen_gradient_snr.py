@@ -115,7 +115,7 @@ ax2.set_xlim(-0.8, 31.8)
 
 plt.tight_layout(pad=1.0)
 
-out_dir = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
+out_dir = './figures/paper'
 plt.savefig(f'{out_dir}/gradient_snr_comparison.pdf', bbox_inches='tight', dpi=300)
 plt.savefig(f'{out_dir}/gradient_snr_comparison.png', bbox_inches='tight', dpi=300)
 print('Done.')

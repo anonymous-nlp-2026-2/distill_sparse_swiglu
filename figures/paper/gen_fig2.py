@@ -90,7 +90,7 @@ ax.legend(loc='upper left', framealpha=0.9, edgecolor='none')
 
 plt.tight_layout()
 
-outdir = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
+outdir = './figures/paper'
 plt.savefig(f'{outdir}/fig2_sparsity_sweep.pdf')
 plt.savefig(f'{outdir}/fig2_sparsity_sweep.png')
 plt.close()

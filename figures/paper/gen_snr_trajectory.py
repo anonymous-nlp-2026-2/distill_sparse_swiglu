@@ -99,7 +99,7 @@ ax.annotate(
 
 fig.tight_layout(pad=0.5)
 
-out_dir = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
+out_dir = './figures/paper'
 fig.savefig(f'{out_dir}/snr_trajectory.pdf', dpi=300, bbox_inches='tight')
 fig.savefig(f'{out_dir}/snr_trajectory.png', dpi=300, bbox_inches='tight')
 print('Saved snr_trajectory.pdf and snr_trajectory.png')

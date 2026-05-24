@@ -1,0 +1,47 @@
+\section{Related Work}
+
+\paragraph{Training-Free Activation Sparsity.}
+TEAL~\cite{liu2025teal} applies global top-$k$ selection by activation magnitude and achieves 40--50\% sparsity with no training cost.
+CATS~\cite{lee2024cats} adapts per-layer thresholds for SiLU/SwiGLU activations; R-Sparse~\cite{zhang2025rsparse} predicts sparsity from rank-aware SVD projections; DIP~\cite{federici2025dip} combines dynamic input pruning with cache-aware masking; SparseInfer~\cite{shin2025sparseinfer} and GRASP~\cite{shin2025grasp} predict activation sparsity patterns without additional training.
+LaRoSA~\cite{huang2025larosa} applies layerwise orthogonal rotations for structured activation sparsity with wall-clock speedup on SiLU models.
+Wang et al.~\cite{wang2025dynamicsparse}, AWQ~\cite{lin2024awq}, and Outlier Suppression+~\cite{wei2023outlier} address sparsity--quantization interactions and activation-aware quantization.
+Dhar et al.~\cite{dhar2024activation} characterize activation sparsity opportunities across architectures, showing that SwiGLU models exhibit lower natural sparsity than ReLU counterparts.
+OWL~\cite{yin2024owl} determines per-layer sparsity ratios from outlier distributions for weight pruning.
+All training-free methods determine masks from fixed statistics or input-independent criteria, while our predictor generates \emph{input-dependent} masks trained to minimize output-distribution divergence.
+
+\paragraph{Predictor-Based Contextual Sparsity.}
+DejaVu~\cite{liu2023dejavu} introduced learned sparsity predictors trained via BCE to classify each neuron independently.
+ShadowLLM~\cite{akhauri2024shadowllm} uses attention-based routing with per-layer MSE supervision for intermediate coupling within each layer but without end-to-end gradient signal.
+FastForward~\cite{gautam2026fastforward} adds a 67.2M-parameter compensation network using BCE for mask prediction, adding inference latency.
+SVD-CSP~\cite{serbin2026svdcsp} compresses sparsity predictors via SVD decomposition for reduced predictor overhead.
+Dhar et al.~\cite{dhar2025clustering} compress activation patterns via clustering for efficient neuron-level prediction.
+LazyLLM~\cite{fu2024lazyllm} dynamically prunes tokens across layers for long-context efficiency; COTS~\cite{zhang2025cots} exploits connected activation patterns for structured sparse inference.
+PowerInfer~\cite{song2024powerinfer} and PowerInfer-2~\cite{xue2024powerinfer2} exploit power-law activation frequencies for GPU--CPU/NPU scheduling.
+MaskLLM~\cite{fang2024maskllm} shares the recipe-level principle of frozen weights + learnable masks + KL training.
+The methods differ in three respects: (a) MaskLLM's mask parameters are fixed per input (static N:M weight sparsity via Gumbel-Softmax), while our predictor generates \emph{per-token} masks that must generalize to unseen inputs; (b) static N:M patterns have no cross-layer allocation interaction, whereas our masks coordinate through TEAL's global top-$k$; (c) activation masks must be robust to distribution shift at inference, while weight masks are input-independent.
+Our contribution beyond the shared recipe is analytical: a systematic decomposition of signal type vs.\ coupling scope for sparsity prediction training, via target-swap ablation and per-layer KL controls (\S\ref{sec:perlayer}).
+All prior predictor-based methods for activation sparsity use decomposed (BCE) or intermediate (MSE) objectives where each neuron's gradient is independent of other mask states.
+We empirically observe that an output-distribution-coupled objective propagates gradients through all downstream layers and quantify when this matters for global allocation quality.
+
+\paragraph{Static Bias Correction.}
+SPON (Spontaneous Neurons;~\citealp{xu2025spon}) learns input-independent bias vectors via closed-form KL minimization per layer, absorbed into weights at deployment.
+Our method is fundamentally different: a per-token contextual predictor trained end-to-end across all layers that produces input-dependent masks.
+SPON solves a static per-layer problem; we solve a global dynamic prediction problem. The two are weakly correlated (cosine similarity 0.196, $R^2$=0.038; \S\ref{sec:experiments}).
+
+\paragraph{Activation Function Engineering.}
+ReLU Strikes Back~\cite{mirzadeh2024relu} replaces SiLU with ReLU for $>$90\% natural sparsity; TurboSparse~\cite{song2024turbosparse} and ProSparse~\cite{song2025prosparse} engineer extreme sparsity through activation modifications; the Sparsing Law~\cite{luo2024sparsinglaw} formalizes how activation density increases with training compute.
+MiniTron~\cite{muralidharan2024minitron} combines structured pruning with distillation but modifies architecture permanently.
+Haziza et al.~\cite{haziza2025accelerating} demonstrate 2:4 semi-structured activation sparsity with hardware-native acceleration, complementing our unstructured approach.
+MoC~\cite{wu2025moc} selectively activates Top-$K$ FFN channels using SwiGLU's native gating during pretraining.
+All require retraining or weight modification; our method is a plug-in predictor on \emph{unmodified} SwiGLU models.
+
+\paragraph{Weight Pruning, Distillation, and Routing.}
+Wanda~\cite{sun2024wanda}, SparseGPT~\cite{frantar2023sparsegpt}, and SliceGPT~\cite{ashkboos2024slicegpt} produce static weight masks via one-shot or structured pruning; Polar Sparsity~\cite{shrestha2025polar} scales contextual sparsity to batched inference by shifting focus from MLP to attention head sparsity; Alizadeh et al.~\cite{alizadeh2024llmflash} leverage activation sparsity for memory-efficient inference via selective flash loading.
+Switch Transformers~\cite{fedus2022switch} and Mixture-of-Depths~\cite{raposo2024mod} achieve conditional computation through learned routing.
+KL-based distillation~\cite{kim2016sequencekd,sanh2019distilbert,gu2024minillm,agarwal2024gkd,ko2024distillm} trains compact students; SparseLoRA~\cite{khaki2025sparselora} exploits contextual sparsity for fine-tuning.
+We apply the KL principle to train a sparsity predictor on unmodified dense models, using Gumbel-Sigmoid sampling~\cite{maddison2017concrete,louizos2018l0} for differentiable discrete mask optimization.
+
+\paragraph{MoE Routing and Gated Sparsity.}
+Expert Choice routing~\cite{zhou2022expertchoice} lets each expert select its top-$k$ tokens under a fixed capacity budget, a global allocation perspective that parallels TEAL's neuron-level global top-$k$.
+D2D-MoE~\cite{szatkowski2024d2dmoe} converts dense SwiGLU layers into dynamic-$k$ MoE by exploiting the same activation sparsity we target, but restructures the network into discrete experts rather than predicting masks on the original architecture.
+MoNE~\cite{cheng2025mone} applies neuron-granular top-$k$ selection within each MoE expert during pretraining for fine-grained conditional computation without additional routing parameters.

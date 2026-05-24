@@ -95,7 +95,7 @@ def train_bce_kl_targets(wrapper, kl_predictors, dataloader, args, device):
         accum_agreement = 0.0
         last_sparsity = 0.0
 
-        for ga_step in range(ga):
+        for _ in range(ga):
             try:
                 batch = next(data_iter)
             except StopIteration:
@@ -104,105 +104,105 @@ def train_bce_kl_targets(wrapper, kl_predictors, dataloader, args, device):
 
             input_ids = batch["input_ids"].to(device)
 
-            # Get hidden states from frozen LLM
-            with torch.no_grad():
-                outputs = wrapper.model(input_ids=input_ids, output_hidden_states=True)
-                hidden_states = outputs.hidden_states
+            wrapper.forward_dense(input_ids, capture_intermediates=True)
+            layer_inputs = wrapper.get_layer_inputs()
 
-            # Generate KL oracle masks (frozen)
-            with torch.no_grad():
-                kl_masks = []
-                for i, pred in enumerate(kl_predictors):
-                    h = hidden_states[i]
-                    logits = pred(h)
-                    mask = (logits > 0).float()
-                    kl_masks.append(mask)
+            total_bce = torch.tensor(0.0, device=device)
+            all_masks = {}
+            batch_agreement = 0.0
+            active_layers = 0
 
-            # Train BCE predictors against KL oracle masks
-            total_bce = 0.0
-            total_sparsity = 0.0
-            total_agreement = 0.0
+            for layer_idx in range(num_layers):
+                if layer_idx not in layer_inputs:
+                    continue
+                inp = layer_inputs[layer_idx]
 
-            for i in range(num_layers):
-                h = hidden_states[i]
-                logits = wrapper.predictors[i](h)
-                target = kl_masks[i]
+                with torch.no_grad():
+                    kl_logits = kl_predictors[layer_idx](inp)
+                    oracle_target = (kl_logits > 0).float()
 
-                bce = F.binary_cross_entropy_with_logits(logits, target)
-                total_bce += bce
+                new_logits = wrapper.predictors[layer_idx](inp)
+                total_bce = total_bce + F.binary_cross_entropy_with_logits(
+                    new_logits, oracle_target)
 
-                probs = torch.sigmoid(logits)
-                sparsity = (1.0 - probs).mean()
-                total_sparsity += sparsity
+                # STE mask for sparsity tracking
+                soft_mask = torch.sigmoid(new_logits)
+                hard_mask = (new_logits > 0).float()
+                all_masks[layer_idx] = hard_mask - soft_mask.detach() + soft_mask
 
-                pred_mask = (logits > 0).float()
-                agreement = (pred_mask == target).float().mean()
-                total_agreement += agreement
+                batch_agreement += (hard_mask == oracle_target).float().mean().item()
+                active_layers += 1
 
-            avg_bce = total_bce / num_layers
-            avg_sparsity = total_sparsity / num_layers
-            avg_agreement = total_agreement / num_layers
+            total_bce = total_bce / max(active_layers, 1)
 
-            # Lagrangian sparsity constraint
-            sparsity_violation = target_sparsity - avg_sparsity
-            constraint = lambda_sparse * torch.relu(sparsity_violation - margin)
+            if all_masks:
+                actual_sparsity = 1.0 - torch.stack(
+                    [m.mean() for m in all_masks.values()]).mean()
+                sparsity_error = torch.abs(actual_sparsity - target_sparsity)
+                constraint_loss = lambda_sparse * torch.clamp(
+                    sparsity_error - margin, min=0.0) ** 2
+            else:
+                constraint_loss = torch.tensor(0.0, device=device)
 
-            loss = (avg_bce + constraint) / ga
+            loss = (total_bce + constraint_loss) / ga
             loss.backward()
 
-            accum_loss += loss.item() * ga
-            accum_bce += avg_bce.item()
-            accum_constraint += constraint.item()
-            accum_agreement += avg_agreement.item()
-            last_sparsity = avg_sparsity.item()
+            accum_loss += loss.item()
+            accum_bce += total_bce.item() / ga
+            accum_constraint += constraint_loss.item() / ga
+            if active_layers > 0:
+                accum_agreement += (batch_agreement / active_layers) / ga
 
+        torch.nn.utils.clip_grad_norm_(params, 1.0)
         optimizer.step()
-        optimizer.zero_grad()
         scheduler.step()
+        optimizer.zero_grad()
 
-        # Update Lagrangian multiplier
         with torch.no_grad():
-            if last_sparsity < target_sparsity - margin:
-                lambda_sparse = min(lambda_sparse * 1.05, args.lambda_max)
-            elif last_sparsity > target_sparsity + margin:
-                lambda_sparse = max(lambda_sparse * 0.95, 0.1)
+            if all_masks:
+                avg_sparsity = 1.0 - torch.stack(
+                    [m.mean() for m in all_masks.values()]).mean().item()
+            else:
+                avg_sparsity = 0.0
+        last_sparsity = avg_sparsity
 
-        if opt_step % args.log_every == 0 or opt_step == 1:
+        old_lambda = lambda_sparse
+        if avg_sparsity < target_sparsity - margin:
+            lambda_sparse *= 2.0
+        elif avg_sparsity > target_sparsity + margin:
+            lambda_sparse *= 0.5
+        lambda_sparse = max(0.01, min(lambda_sparse, args.lambda_max))
+
+        log_dict = {
+            "loss": accum_loss, "bce_loss": accum_bce,
+            "constraint_loss": accum_constraint, "sparsity": last_sparsity,
+            "oracle_agreement": accum_agreement,
+            "lr": scheduler.get_last_lr()[0], "lambda_sparse": lambda_sparse,
+        }
+        wandb.log(log_dict, step=opt_step)
+
+        if opt_step % args.log_every == 0 or opt_step <= 5:
             elapsed = time.time() - t0
-            print(f"Step {opt_step}/{args.num_steps} "
-                  f"  bce={accum_bce/ga:.4f}  constraint={accum_constraint/ga:.4f} "
-                  f" sparsity={last_sparsity:.3f}  agree={accum_agreement/ga:.3f} "
-                  f" lambda={lambda_sparse:.1f}  lr={scheduler.get_last_lr()[0]:.2e} "
-                  f" t={elapsed:.0f}s")
+            print(
+                f"[Step {opt_step}/{args.num_steps}] loss={accum_loss:.4f} "
+                f"bce={accum_bce:.4f} constraint={accum_constraint:.4f} "
+                f"sparsity={last_sparsity:.3f} agreement={accum_agreement:.3f} "
+                f"lambda={lambda_sparse:.2f} "
+                f"lr={scheduler.get_last_lr()[0]:.2e} "
+                f"elapsed={elapsed:.1f}s ({elapsed/opt_step:.2f}s/step)"
+            )
 
-            wandb.log({
-                "train/bce_loss": accum_bce / ga,
-                "train/constraint": accum_constraint / ga,
-                "train/sparsity": last_sparsity,
-                "train/agreement": accum_agreement / ga,
-                "train/lambda": lambda_sparse,
-                "train/lr": scheduler.get_last_lr()[0],
-            }, step=opt_step)
-
-    elapsed = time.time() - t0
-    print(f"\nTraining done in {elapsed:.1f}s")
-    print(f"  Final BCE loss: {accum_bce/ga:.4f}")
-    print(f"  Final sparsity: {last_sparsity:.3f}")
-    print(f"  Final agreement: {accum_agreement/ga:.3f}")
-
-    wandb.log({
-        "final/bce_loss": accum_bce / ga,
-        "final/sparsity": last_sparsity,
-        "final/agreement": accum_agreement / ga,
-        "final/train_time_sec": elapsed,
-    })
+    total_time = time.time() - t0
+    print(f"\nBCE+KL-targets training complete: {args.num_steps} steps in "
+          f"{total_time:.1f}s ({total_time/args.num_steps:.2f}s/step)")
 
 
+@torch.no_grad()
 def evaluate_ppl(wrapper, tokenizer, device, args):
-    """Evaluate perplexity on WikiText-2 with sparse masks."""
-    print("\nEvaluating on WikiText-2 ...")
-    examples = get_eval_dataset(tokenizer, seq_len=args.seq_len,
-                                 max_samples=args.max_eval_samples)
+    """Evaluate WikiText-2 perplexity with the trained predictor's hard masks."""
+    print("\nLoading WikiText-2 for evaluation ...")
+    examples = get_eval_dataset("wikitext2", tokenizer, args.seq_len,
+                                max_samples=args.max_eval_samples)
     print(f"  {len(examples)} sequences")
 
     wrapper.predictors.eval()
