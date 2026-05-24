@@ -322,10 +322,10 @@ TEAL & 8.73 & 56.83 & \textbf{72.69} & \textbf{71.83} & 49.51 & 70.51 & 74.70 \\
 BCE & 8.76 & \textbf{57.59} & 72.61 & 71.67 & \textbf{53.07} & 53.43 & 68.28 \\ % exp_id: qwen14b_bce30_s42_eval
 \midrule
 \multicolumn{8}{l}{\emph{Uniform allocation}} \\
-KL (Ours) & \textbf{7.90} & 53.50 & \textbf{72.82} & 63.55 & 30.9$\pm$6.8$^*$ & \textbf{72.68$\pm$0.2} & \textbf{76.01$\pm$1.1} \\ % exp_id: qwen14b_kl30_uniform (2-seed s42/s456; s123 eval incomplete)
+KL (Ours) & \textbf{7.90} & 53.50 & \textbf{72.82} & 63.55 & 32.2$\pm$5.3 & \textbf{72.68$\pm$0.2} & \textbf{76.01$\pm$1.1} \\ % exp_id: qwen14b_kl30_uniform (3-seed s42/s123(v4)/s456)
 TEAL & 8.01 & \textbf{55.29} & 69.85 & \textbf{66.34} & \textbf{52.1} & 67.72 & 74.70 \\ % exp_id: qwen14b_teal30_uniform
 \bottomrule
-\multicolumn{8}{l}{\footnotesize $^*$GSM8K: $n{=}2$ (s42/s456); s123 eval incomplete.} \\
+\multicolumn{8}{l}{\footnotesize GSM8K: 3-seed (s42/s123(v4)/s456).} \\
 \end{tabular}}
 \end{table}
 
@@ -645,7 +645,7 @@ $K$ & PPL$\downarrow$ & ARC-c & WG & MMLU & GSM8K & HS & PIQA \\
 \end{table}
 
 PPL exhibits a non-monotonic U-shape (Figure~\ref{fig:k_curve_ppl}): $K{=}2$ is worst (10.75$\pm$0.15), likely due to insufficient per-layer updates (${\sim}$62 updates/layer vs.\ ${\sim}$250 at $K{=}8$). $K{=}16$ achieves the lowest PPL (8.67$\pm$0.02), marginally better than E2E (8.81$\pm$0.02). $K{=}16$ MMLU exhibits high seed variance (std=2.9; s42=44.0, s123=40.0, s456=38.7), with the 3-seed mean (40.9) indistinguishable from E2E (40.7$\pm$1.3).
-The signal type gap ($K{=}1$ KL 9.05 vs.\ per-layer MSE 18.52$\pm$1.68) of 9.47 PPL dwarfs the coupling breadth range within KL (best $K{=}16$ 8.67 vs.\ worst $K{=}2$ 10.75 = 2.08 PPL), reinforcing that output-distribution alignment, not coupling scope, is the primary quality lever for PPL at this sparsity level. % exp_id: k_curve_k2_3seed, k_curve_k8_3seed, k_curve_k16_3seed, perlayer_kl_30_3seed, perlayer_kl_k4_3seed
+The signal type gap ($K{=}1$ KL 9.05 vs.\ per-layer MSE 18.52$\pm$1.68) of 9.47 PPL exceeds the coupling breadth range within KL (best $K{=}16$ 8.67 vs.\ worst $K{=}2$ 10.75 = 2.08 PPL), reinforcing that output-distribution alignment, not coupling scope, is the primary quality lever for PPL at this sparsity level. % exp_id: k_curve_k2_3seed, k_curve_k8_3seed, k_curve_k16_3seed, perlayer_kl_30_3seed, perlayer_kl_k4_3seed
 
 \section{Licenses}
 \label{app:licenses}

@@ -7,6 +7,7 @@ LaRoSA~\cite{huang2025larosa} applies layerwise orthogonal rotations for structu
 Wang et al.~\cite{wang2025dynamicsparse}, AWQ~\cite{lin2024awq}, and Outlier Suppression+~\cite{wei2023outlier} address sparsity--quantization interactions and activation-aware quantization.
 Dhar et al.~\cite{dhar2024activation} characterize activation sparsity opportunities across architectures, showing that SwiGLU models exhibit lower natural sparsity than ReLU counterparts.
 OWL~\cite{yin2024owl} determines per-layer sparsity ratios from outlier distributions for weight pruning.
+ActTail~\cite{zheng2026acttail} applies heavy-tailed self-regularization for global activation sparsity allocation; WiSparse~\cite{yang2026wisparse} proposes weight-aware mixed activation sparsity.
 All training-free methods determine masks from fixed statistics or input-independent criteria, while our predictor generates \emph{input-dependent} masks trained to minimize output-distribution divergence.
 
 \paragraph{Predictor-Based Contextual Sparsity.}

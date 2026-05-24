@@ -8,22 +8,22 @@ Unlike MaskLLM~\cite{fang2024maskllm}, which applies KL to static N:M weight mas
 
 Gradient analysis reveals a structural asymmetry: BCE's gradient $\partial \mathcal{L}_{\text{BCE}} / \partial s_j = \sigma(s_j) - m_j^*$ depends only on neuron $j$, while under KL divergence, the gradient couples each neuron to all others through the downstream Jacobian (\S\ref{sec:method:gradient}).
 KL's coupled gradients discover neuron importance patterns that diverge 68\% from magnitude-based masks (mean per-layer Jaccard distance).
-A target-swap ablation shows KL-discovered mask targets carry most of the quality information: BCE retrained on KL-derived targets approaches KL PPL ($\leq$0.65pp gap, 3-seed), while magnitude-trained BCE yields 28.13$\pm$0.20. Coupling contributes marginally to PPL but meaningfully to downstream fidelity (\S\ref{sec:perlayer}).
+A target-swap ablation shows KL-discovered mask targets carry most of the quality information: BCE retrained on KL-derived targets approaches KL PPL ($\leq$0.65pp gap, 3-seed), while magnitude-trained BCE yields 28.13$\pm$0.20. Per-layer controls suggest coupling effects are task-dependent, with larger impacts on commonsense than knowledge tasks (\S\ref{sec:perlayer}).
 
 We instantiate a lightweight predictor (75.9M params, $<$1\% of base) trained with forward KL and Gumbel-Sigmoid relaxation~\cite{jang2017gumbel} on LLaMA-3.1-8B~\cite{grattafiori2024llama3}.
 At 30\% sparsity under uniform allocation, the predictor reduces TEAL's perplexity by 14.5\% at matched sparsity (8.81 vs.\ 10.30, both at 28.5\%) with downstream (MMLU 40.7$\pm$1.3\% vs.\ 65.3\% dense, 3-seed); global top-$k$ amplifies cross-seed variance ($7.3\times$).
 At 50\%, the perplexity advantage widens (50\% over TEAL), but downstream reasoning collapses regardless of method.
 
-Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} (3-seed) confirms the PPL advantage ($-$17.3\%) with directional commonsense gains but tied MMLU; preliminary evaluation on Qwen-2.5-14B~\cite{qwen2024qwen25} shows consistent PPL improvement but reasoning decline (GSM8K $-$21.2pp, $\sigma$=6.8pp, $n{=}2$; MMLU $-$2.8pp).
+Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} (3-seed) confirms the PPL advantage ($-$17.3\%) with directional commonsense gains but tied MMLU; preliminary evaluation on Qwen-2.5-14B~\cite{qwen2024qwen25} shows consistent PPL improvement but reasoning decline (GSM8K $-$19.9pp, $\sigma$=5.3pp; MMLU $-$2.8pp).
 This paper is primarily an empirical study characterizing how the training objective shapes sparsity prediction quality across allocation strategies, sparsity levels, and model scales. The central finding---that output-distribution alignment consistently and substantially outperforms per-neuron classification for learned sparsity---is the paper's contribution. Without sparse kernel support, the predictor adds 6.4\% latency overhead; wall-clock speedup is not addressed (Appendix~\ref{app:latency}).
 While individual components (KL divergence, Gumbel-Sigmoid relaxation) are established techniques, their application to contextual activation sparsity prediction has not been explored, and the resulting empirical behaviors are non-obvious.
 
 Our contributions are:
 \begin{itemize}[nosep,leftmargin=*]
-\item \emph{Empirical:} Output-distribution alignment ranking across five losses, with exploratory per-layer KL decomposition into signal type (may account for most of the PPL gap; upper bound) and coupling scope (task-dependent; $K{=}4$-corrected; \S\ref{sec:perlayer});
-\item \emph{Empirical:} Cross-scale evidence at 7--14B confirming output-distribution losses outperform intermediate losses regardless of coupling scope (\S\ref{sec:experiments}).
-\item \emph{Practical:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; coupling refines downstream fidelity beyond PPL (\S\ref{sec:perlayer}).
-\item \emph{Practical:} These mask patterns render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
+\item \emph{Empirical:} Output-distribution alignment ranking across five losses, with per-layer decomposition showing the signal type gap (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), though confounded by train--inference mismatch (\S\ref{sec:perlayer});
+\item \emph{Empirical:} Cross-scale evidence (7--14B) with task-type split: KL outperforms on PPL and commonsense but shows systematic knowledge regression, structural to output-distribution optimization (C4 control; \S\ref{sec:experiments});
+\item \emph{Analytical:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; per-layer controls suggest task-dependent coupling effects (\S\ref{sec:perlayer});
+\item \emph{Analytical:} KL-derived masks render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
 \end{itemize}
 
 \begin{figure}[t]

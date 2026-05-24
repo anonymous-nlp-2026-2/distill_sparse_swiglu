@@ -1,4 +1,4 @@
-\begin{thebibliography}{61}
+\begin{thebibliography}{63}
 \providecommand{\natexlab}[1]{#1}
 
 \bibitem[{Agarwal et~al.(2024)Agarwal, Vieillard, Zhou, Stanczyk, Ramos, Geist,
@@ -444,6 +444,12 @@ Zhiyuan Xue, Yixin Song, Zeyu Mi, Le~Chen, Yubin Xia, and Haibo Chen. 2024.
   language model inference on a smartphone}.
 \newblock \emph{arXiv preprint arXiv:2406.06282}.
 
+\bibitem[{Yang(2026)}]{yang2026wisparse}
+others Yang. 2026.
+\newblock {WiSparse}: Weight-aware mixed activation sparsity for large language
+  models.
+\newblock \emph{arXiv preprint arXiv:2602.14452}.
+
 \bibitem[{Yin et~al.(2024)Yin, Wu, Zhang, Hsieh, Wang, Jia, Li, Jaiswal,
   Pechenizkiy, Liang, Bendersky, Wang, and Liu}]{yin2024owl}
 Lu~Yin, You Wu, Zhenyu Zhang, Cheng-Yu Hsieh, Yaqing Wang, Yiling Jia, Gen Li,
@@ -470,6 +476,12 @@ Zhenyu Zhang, Zechun Liu, Yuandong Tian, Harshit Khaitan, Zhangyang Wang, and
   activation sparsity for efficient llm inference}.
 \newblock In \emph{Proceedings of the International Conference on Learning
   Representations (ICLR)}.
+
+\bibitem[{Zheng et~al.(2026)}]{zheng2026acttail}
+Haocheng Zheng and 1 others. 2026.
+\newblock {ActTail}: Heavy-tailed self-regularization for activation sparsity
+  in large language models.
+\newblock \emph{arXiv preprint arXiv:2603.12272}.
 
 \bibitem[{Zhou et~al.(2022)Zhou, Lei, Liu, Du, Huang, Zhao, Dai, Chen, Le, and
   Laudon}]{zhou2022expertchoice}

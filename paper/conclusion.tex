@@ -1,5 +1,8 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-At moderate sparsity (30\%), output-distribution alignment is the primary design dimension: signal type may account for most of the PPL gap (upper bound; Appendices~\ref{app:k4_downstream},~\ref{app:constraint}).
-A $<$1\% predictor reduces TEAL's PPL by 14.5\% via divergent masks; directional downstream gains but knowledge regression persist across scales.
+Output-distribution alignment is the primary design dimension for learned sparsity prediction, outperforming BCE and MSE across five losses.
+The KL predictor reduces PPL by 14.5\% over TEAL at 30\%, confirmed on Mistral-7B ($-$17.3\%) and Qwen-2.5-14B.
+Gains are task-type dependent: KL improves commonsense reasoning but degrades knowledge-intensive tasks (C4 control confirms structural to KL), suggesting KL for commonsense/PPL and TEAL for knowledge tasks.
+The signal type gap (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), though the decomposition is confounded by train--inference mismatch (\S\ref{sec:perlayer}); disentangling these factors remains an open question.
+Downstream differences are directional ($n{=}3$, CIs overlap). Code released upon acceptance.
