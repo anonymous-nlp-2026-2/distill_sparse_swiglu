@@ -26,7 +26,7 @@ COL_GRAY = '#999999'
 COL_LIGHT_BLUE = '#56B4E9'
 COL_DARK_BLUE = '#0072B2'
 
-OUT_DIR = './figures/paper'
+OUT_DIR = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
 
 fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(8, 3.5),
                                   gridspec_kw={'width_ratios': [1, 1.1]})

@@ -100,9 +100,9 @@ ax.set_xlim(-20, 1020)
 ax.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
 ax.set_axisbelow(True)
 
-ax.legend(loc='upper left', frameon=True, fancybox=False,
-          edgecolor='#DDDDDD', framealpha=0.9,
-          bbox_to_anchor=(0.02, 0.98))
+ax.legend(loc='lower right', frameon=True, fancybox=False,
+          edgecolor='#DDDDDD', framealpha=0.9, fontsize=7,
+          bbox_to_anchor=(0.98, 0.02), handletextpad=0.4)
 
 ax.annotate(
     'BCE: higher SNR\nbut worse masks',

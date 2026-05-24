@@ -37,7 +37,7 @@ MoC~\cite{wu2025moc} selectively activates Top-$K$ FFN channels using SwiGLU's n
 All require retraining or weight modification; our method is a plug-in predictor on \emph{unmodified} SwiGLU models.
 
 \paragraph{Weight Pruning, Distillation, and Routing.}
-Wanda~\cite{sun2024wanda}, SparseGPT~\cite{frantar2023sparsegpt}, and SliceGPT~\cite{ashkboos2024slicegpt} produce static weight masks via one-shot or structured pruning; Polar Sparsity~\cite{shrestha2025polar} scales contextual sparsity to batched inference by shifting focus from MLP to attention head sparsity; Alizadeh et al.~\cite{alizadeh2024llmflash} leverage activation sparsity for memory-efficient inference via selective flash loading.
+Wanda~\cite{sun2024wanda}, SparseGPT~\cite{frantar2023sparsegpt}, and SliceGPT~\cite{ashkboos2024slicegpt} produce static weight masks via one-shot or structured pruning; Polar Sparsity~\cite{shrestha2025polar} scales contextual sparsity to batched inference by shifting focus from MLP to attention head sparsity; Alizadeh et al.~\cite{alizadeh2024llmflash} exploit activation sparsity for memory-efficient inference via selective flash loading.
 Switch Transformers~\cite{fedus2022switch} and Mixture-of-Depths~\cite{raposo2024mod} achieve conditional computation through learned routing.
 KL-based distillation~\cite{kim2016sequencekd,sanh2019distilbert,gu2024minillm,agarwal2024gkd,ko2024distillm} trains compact students; SparseLoRA~\cite{khaki2025sparselora} exploits contextual sparsity for fine-tuning.
 We apply the KL principle to train a sparsity predictor on unmodified dense models, using Gumbel-Sigmoid sampling~\cite{maddison2017concrete,louizos2018l0} for differentiable discrete mask optimization.

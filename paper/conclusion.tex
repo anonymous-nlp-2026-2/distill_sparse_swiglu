@@ -3,6 +3,5 @@
 
 Output-distribution alignment is the primary design dimension for learned sparsity prediction, outperforming BCE and MSE across five losses.
 The KL predictor reduces PPL by 14.5\% over TEAL at 30\%, confirmed on Mistral-7B ($-$17.3\%) and Qwen-2.5-14B.
-Gains are task-type dependent: KL improves commonsense reasoning but degrades knowledge-intensive tasks (C4 control suggests structural to the optimization objective), suggesting KL for commonsense/PPL and TEAL for knowledge tasks.
-The signal type gap (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), though confounded by train--inference mismatch (\S\ref{sec:perlayer}).
+Gains are task-type dependent: KL improves commonsense reasoning but degrades knowledge-intensive tasks, suggesting KL for commonsense/PPL and TEAL for knowledge tasks (\S\ref{sec:experiments}).
 Downstream differences are directional ($n{=}3$); code released upon acceptance.

@@ -98,9 +98,9 @@ ax.set_xticks(np.arange(0, 32, 4))
 ax.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
 ax.set_axisbelow(True)
 
-ax.legend(loc='lower left', frameon=True, fancybox=False,
-          edgecolor='#DDDDDD', fontsize=7, ncol=1,
-          bbox_to_anchor=(0.02, 0.02))
+ax.legend(loc='upper right', frameon=True, fancybox=False,
+          edgecolor='#DDDDDD', fontsize=6.5, ncol=1,
+          bbox_to_anchor=(0.98, 0.98), handletextpad=0.4)
 
 fig.tight_layout()
 fig.savefig(f'{OUT}/per_layer_retention_chart.pdf')

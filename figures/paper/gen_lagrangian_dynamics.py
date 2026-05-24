@@ -1,17 +1,38 @@
+"""Figure A.1: Lagrangian controller dynamics — two stacked panels (no dual y-axis)."""
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
 import numpy as np
 
-matplotlib.rcParams.update({
+plt.rcParams.update({
+    'font.family': 'serif',
     'font.size': 9,
-    'axes.labelsize': 10,
+    'axes.labelsize': 9,
     'xtick.labelsize': 8,
     'ytick.labelsize': 8,
-    'legend.fontsize': 8,
-    'font.family': 'serif',
+    'legend.fontsize': 7.5,
+    'figure.dpi': 300,
+    'savefig.dpi': 300,
+    'savefig.bbox': 'tight',
+    'savefig.pad_inches': 0.05,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+    'lines.linewidth': 1.3,
+    'pdf.fonttype': 42,
+    'ps.fonttype': 42,
+    'axes.linewidth': 0.6,
+    'xtick.major.width': 0.6,
+    'ytick.major.width': 0.6,
+    'xtick.major.size': 3,
+    'ytick.major.size': 3,
     'mathtext.fontset': 'cm',
 })
+
+COL_LAMBDA = '#4472C4'
+COL_SPARSITY = '#E05A3A'
+
+OUT = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
 
 raw = """1,0.406,0.50
 10,0.406,0.01
@@ -125,47 +146,43 @@ for line in raw.strip().split('\n'):
 steps = np.array(steps)
 sparsities = np.array(sparsities)
 lambdas = np.array(lambdas)
-
-# Clamp lambda floor for log scale
 lambdas_plot = np.clip(lambdas, 1e-2, None)
 
-fig, ax1 = plt.subplots(figsize=(5, 3.5))
+fig, (ax1, ax2) = plt.subplots(
+    2, 1, figsize=(3.3, 3.2), sharex=True,
+    gridspec_kw={'height_ratios': [1.1, 1], 'hspace': 0.12})
 
-color_lambda = '#4472C4'
-color_sparsity = '#E05A3A'
-
-ax1.set_xlabel('Training Step')
-ax1.set_ylabel(r'$\lambda$ (Lagrange multiplier)', color=color_lambda)
-ax1.plot(steps, lambdas_plot, color=color_lambda, linewidth=1.2, label=r'$\lambda$')
+# --- Top panel: lambda ---
+ax1.plot(steps, lambdas_plot, color=COL_LAMBDA, linewidth=1.2, zorder=3)
 ax1.set_yscale('log')
-ax1.set_ylim(5e-3, 1e4)
-ax1.tick_params(axis='y', labelcolor=color_lambda)
+ax1.set_ylim(5e-3, 1.5e4)
+ax1.set_ylabel(r'$\lambda$ (penalty weight)')
+ax1.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
+ax1.set_axisbelow(True)
+ax1.text(0.97, 0.08, '(a)', transform=ax1.transAxes,
+         fontsize=10, fontweight='bold', va='bottom', ha='right')
 
-ax2 = ax1.twinx()
-ax2.set_ylabel('Actual Sparsity', color=color_sparsity)
-ax2.plot(steps, sparsities, color=color_sparsity, linewidth=1.2, label='Sparsity')
-ax2.axhline(y=0.3, color=color_sparsity, linestyle='--', linewidth=0.8, alpha=0.7)
-ax2.annotate('target = 0.3', xy=(1000, 0.3), xytext=(-60, -14),
-             textcoords='offset points', fontsize=7, color=color_sparsity, alpha=0.8)
-ax2.set_ylim(0.20, 0.45)
-ax2.tick_params(axis='y', labelcolor=color_sparsity)
+ax1.axhline(y=5000, color=COL_LAMBDA, linestyle=':', linewidth=0.7, alpha=0.5)
+ax1.text(1010, 5000, r'$\lambda_{\max}$', fontsize=7, color=COL_LAMBDA,
+         alpha=0.7, va='center', ha='left')
 
-ax1.set_xlim(0, 1050)
+# --- Bottom panel: sparsity ---
+ax2.plot(steps, sparsities, color=COL_SPARSITY, linewidth=1.2, zorder=3)
+ax2.axhline(y=0.3, color=COL_SPARSITY, linestyle='--', linewidth=0.8, alpha=0.6)
+ax2.text(1010, 0.3, 'target', fontsize=7, color=COL_SPARSITY,
+         alpha=0.7, va='center', ha='left')
 
-ax1.spines['top'].set_visible(False)
-ax2.spines['top'].set_visible(False)
+ax2.set_ylim(0.22, 0.43)
+ax2.set_ylabel('Actual sparsity')
+ax2.set_xlabel('Training Step')
+ax2.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
+ax2.set_axisbelow(True)
+ax2.set_xlim(0, 1050)
+ax2.text(0.97, 0.92, '(b)', transform=ax2.transAxes,
+         fontsize=10, fontweight='bold', va='top', ha='right')
 
-ax1.grid(True, alpha=0.2, color='grey', linewidth=0.5)
-
-lines1, labels1 = ax1.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
-ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', framealpha=0.9)
-
-fig.tight_layout()
-
-import pathlib
-out_dir = pathlib.Path(__file__).parent
-fig.savefig(out_dir / 'lagrangian_dynamics.pdf', bbox_inches='tight', dpi=300)
-fig.savefig(out_dir / 'lagrangian_dynamics.png', bbox_inches='tight', dpi=300)
-print(f'Saved to {out_dir / "lagrangian_dynamics.pdf"}')
-print(f'Saved to {out_dir / "lagrangian_dynamics.png"}')
+fig.subplots_adjust(left=0.18, right=0.92, top=0.97, bottom=0.12)
+fig.savefig(f'{OUT}/lagrangian_dynamics.pdf')
+fig.savefig(f'{OUT}/lagrangian_dynamics.png')
+print('Saved lagrangian_dynamics.pdf/.png')
+plt.close()
