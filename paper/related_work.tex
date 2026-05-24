@@ -21,7 +21,7 @@ PowerInfer~\cite{song2024powerinfer} and PowerInfer-2~\cite{xue2024powerinfer2} 
 MaskLLM~\cite{fang2024maskllm} shares the recipe-level principle of frozen weights + learnable masks + KL training.
 The methods differ in three respects: (a) MaskLLM's mask parameters are fixed per input (static N:M weight sparsity via Gumbel-Softmax), while our predictor generates \emph{per-token} masks that must generalize to unseen inputs; (b) static N:M patterns have no cross-layer allocation interaction, whereas our masks coordinate through TEAL's global top-$k$; (c) activation masks must be robust to distribution shift at inference, while weight masks are input-independent.
 Our contribution beyond the shared recipe is analytical: a systematic decomposition of signal type vs.\ coupling scope for sparsity prediction training, via target-swap ablation and per-layer KL controls (\S\ref{sec:perlayer}).
-All prior predictor-based methods for activation sparsity use decomposed (BCE) or intermediate (MSE) objectives where each neuron's gradient is independent of other mask states.
+All prior predictor-based methods for activation sparsity use decomposed (BCE) or intermediate (MSE) objectives where each neuron's gradient is independent of other mask states; no prior work systematically compares loss functions for contextual sparsity prediction quality.
 We empirically observe that an output-distribution-coupled objective propagates gradients through all downstream layers and quantify when this matters for global allocation quality.
 
 \paragraph{Static Bias Correction.}
