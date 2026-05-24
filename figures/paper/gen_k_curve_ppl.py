@@ -90,8 +90,9 @@ legend_elements = [
     Line2D([0], [0], color=COL_TEAL, linestyle='--',
            label='TEAL baseline', linewidth=1.0),
 ]
-ax.legend(handles=legend_elements, loc='lower left', frameon=True,
-          fancybox=False, edgecolor='#DDDDDD', fontsize=7)
+ax.legend(handles=legend_elements, loc='upper right', frameon=True,
+          fancybox=False, edgecolor='#DDDDDD', fontsize=7,
+          bbox_to_anchor=(0.98, 0.98))
 
 fig.tight_layout()
 fig.savefig(f'{OUT}/k_curve_ppl.pdf')
