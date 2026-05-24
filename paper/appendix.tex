@@ -9,7 +9,7 @@ Table~\ref{tab:latency} reports inference throughput on a single NVIDIA RTX PRO 
 \centering
 \caption{Inference latency on LLaMA-3.1-8B (RTX PRO 6000 Blackwell, batch=1, seq=2048, fp16, 100 forward passes). Overhead is relative to dense inference.}
 \label{tab:latency}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{llcccc}
 \toprule
 Method & Sparsity & ms/fwd & tok/s & Overhead \\
@@ -22,7 +22,7 @@ KL predictor-only & 50\% & 126.78$\pm$0.31 & 16{,}154 & +6.4\% \\ % exp_id: late
 Predictor + compensation & 30\% & 129.94$\pm$0.75 & 15{,}761 & +9.1\% \\ % exp_id: latency_bench
 Predictor + compensation & 50\% & 129.71$\pm$0.53 & 15{,}789 & +8.9\% \\ % exp_id: latency_bench
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 The full KL-sparse pipeline adds 6.4\% overhead to dense inference (126.78 vs.\ 119.11\,ms/forward), of which the predictor's 32-layer forward pass contributes 3.17\,ms (2.7\%); the remainder arises from mask application and sparse FFN indexing.
@@ -43,7 +43,7 @@ Table~\ref{tab:db_sensitivity} reports the effect of predictor bottleneck dimens
 \centering
 \caption{Predictor bottleneck sensitivity at 50\% sparsity (WikiText-2 PPL$\downarrow$). TEAL global is the primary inference protocol; per-token shown for reference.}
 \label{tab:db_sensitivity}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lcccc}
 \toprule
 $d_b$ & Params & TEAL global & $\Delta$ & Per-token \\
@@ -53,7 +53,7 @@ $d_b$ & Params & TEAL global & $\Delta$ & Per-token \\
 256 & 151.5M (1.89\%) & 12.105 & +1.2\% & 8.586 \\ % exp_id: db_sensitivity_sweep
 512 & 302.5M (3.77\%) & 12.315 & +2.9\% & 7.93 \\ % exp_id: db_sensitivity_sweep
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 Under TEAL global allocation, increasing $d_b$ beyond 128 provides no benefit (PPL slightly worsens), while per-token evaluation shows monotonic improvement (10.16$\to$7.93).
@@ -117,7 +117,7 @@ The geometric doubling pattern ($1 \to 2 \to 4 \to 8 \to \ldots$) enables $\lamb
 \centering
 \caption{Geometric penalty schedule convergence across sparsity targets (margin $\epsilon=0.02$, 1000 training steps). Deviation is $|$actual $-$ target$|$ / target.}
 \label{tab:lagrangian}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lccccc}
 \toprule
 Target $\rho$ & $\lambda_{\max}$ & Final $\lambda$ & Actual sparsity & Deviation \\
@@ -127,7 +127,7 @@ Target $\rho$ & $\lambda_{\max}$ & Final $\lambda$ & Actual sparsity & Deviation
 50\% & 1000 & 8 & 0.504 & 0.8\% \\ % exp_id: kl_50pct_s42
 70\% & 1000 & 1000 (cap) & 0.688 & 1.7\% \\ % exp_id: kl_70pct_s42
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 At 50\% sparsity, the SwiGLU gate distribution already clusters near the target, so $\lambda$ remains low (8); the constraint is nearly satisfied by the initial predictor outputs.
@@ -187,7 +187,7 @@ Table~\ref{tab:ood_downstream} compares downstream performance when the predicto
 \centering
 \caption{Downstream task robustness to calibration domain shift (KL 30\% uniform, seed 42). WikiText: predictor masks from in-domain text; C4: masks from OOD text. Metrics: acc\_norm (ARC-c, HS, PIQA), acc (WG, MMLU), exact\_match (GSM8K).}
 \label{tab:ood_downstream}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lcccccc}
 \toprule
 Calibration & ARC-c & WG & MMLU & GSM8K & HS & PIQA \\
@@ -197,7 +197,7 @@ C4 (OOD) & 40.4 & 69.3 & 41.4 & 6.3 & 70.7 & 74.0 \\ % exp_id: c4_ood_downstream
 \midrule
 $\Delta$ & $-$0.4 & +0.7 & +0.8 & $-$1.1 & $-$0.2 & $-$0.8 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 
@@ -271,7 +271,7 @@ Table~\ref{tab:downstream} reports HellaSwag and PIQA across sparsity levels and
 \centering
 \caption{Extended downstream benchmarks (LLaMA-3.1-8B). HellaSwag: 10-shot normalized acc; PIQA: 0-shot normalized acc. KL 30\% uniform: 3-seed mean$\pm$std; others: seed 42.}
 \label{tab:downstream}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{llcc}
 \toprule
 Sparsity & Method & HellaSwag & PIQA \\
@@ -288,7 +288,7 @@ Sparsity & Method & HellaSwag & PIQA \\
 & KL uniform & 56.66 & 69.10 \\ % exp_id: hellaswag_piqa_kl50_uniform
 & TEAL uniform & 39.35 & 63.66 \\ % exp_id: bench_teal50_uniform_6task
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 At 30\%, the KL predictor retains 86.3\% of dense HellaSwag accuracy (71.07$\pm$0.54 vs.\ 82.35, 3-seed) and 92.6\% of PIQA (74.95$\pm$0.25 vs.\ 80.90), confirming moderate degradation on non-reasoning tasks.
@@ -430,7 +430,7 @@ Table~\ref{tab:cross_arch} evaluates on Mistral-7B-v0.3~\cite{jiang2023mistral} 
 \centering
 \caption{Cross-architecture comparison (WikiText-2 PPL$\downarrow$). Adv = TEAL\,/\,KL ratio. \textbf{Note:} LLaMA results use global top-$k$ allocation; Mistral results use uniform allocation. Mistral 30\%: 3-seed mean$\pm$std; other rows: seed 42.}
 \label{tab:cross_arch}
-\small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{l@{\hspace{4pt}}cc@{\hspace{3pt}}c@{\hspace{6pt}}|@{\hspace{6pt}}cc@{\hspace{3pt}}c}
 \toprule
  & \multicolumn{3}{c}{Mistral-7B} & \multicolumn{3}{c}{LLaMA-8B} \\
@@ -440,7 +440,7 @@ Table~\ref{tab:cross_arch} evaluates on Mistral-7B-v0.3~\cite{jiang2023mistral} 
 50\% & \textbf{8.65} & 18.31 & 2.12$\times$ & \textbf{11.79} & 23.31 & 1.98$\times$ \\ % exp_id: kl_50_mistral, teal_50_mistral
 70\% & \textbf{13.33} & 61.72 & 4.63$\times$ & \textbf{17.91} & 100.11 & 5.59$\times$ \\ % exp_id: kl_70_mistral, teal_70_mistral
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 The KL PPL advantage ratio is consistent across architectures (within 8\% at $\leq$50\% sparsity).
@@ -559,6 +559,7 @@ To test the causal role of the KL predictor's learned per-layer allocation, we e
 \centering
 \caption{Per-layer sparsity constraint analysis. \emph{Protect late}: cap L22--L28 sparsity $\leq$30\%; \emph{Remove valley}: override L14--L18 sparsity to 30\%. Budget redistributed to maintain 30\% overall.}
 \label{tab:constraint}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lcccc}
 \toprule
 Condition & PPL & ARC-c & MMLU & GSM8K \\
@@ -567,7 +568,7 @@ KL baseline (s42) & 8.82 & 40.8 & 40.6 & 7.4 \\
 Protect late layers & 9.26 & 42.4 & 40.7 & 6.5 \\
 Remove valley & 8.76 & 39.3 & 44.0 & 9.0 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 Protecting late layers (L22--L28) does not improve knowledge-intensive metrics despite reducing their sparsity from 48--57\% to $\leq$30\%, while worsening PPL by 5.2\%.
@@ -586,6 +587,7 @@ Table~\ref{tab:perlayer_sparsity} highlights three sub-ranges.
 \centering
 \caption{Per-layer sparsity sub-ranges: KL predictor vs.\ magnitude (LLaMA-3.1-8B, 30\%, uniform allocation). Ranges denote min--max across layers in each group.}
 \label{tab:perlayer_sparsity}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lccc}
 \toprule
 Layer Range & KL (\%) & Mag (\%) & $\Delta$ (pp) \\
@@ -594,7 +596,7 @@ L8--L12 (high pruning) & 32--36 & 25--26 & $+$7 to $+$10 \\
 L14--L18 (protection valley) & 14--18 & 28--30 & $-$8 to $-$16 \\
 L22--L28 (aggressive pruning) & 48--57 & --- & --- \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \section{C4 Training Data Control}
