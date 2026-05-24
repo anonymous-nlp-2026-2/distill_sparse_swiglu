@@ -27,7 +27,7 @@ We empirically observe that an output-distribution-coupled objective propagates 
 \paragraph{Static Bias Correction.}
 SPON (Spontaneous Neurons;~\citealp{xu2025spon}) learns input-independent bias vectors via closed-form KL minimization per layer, absorbed into weights at deployment.
 Our method is fundamentally different: a per-token contextual predictor trained end-to-end across all layers that produces input-dependent masks.
-SPON solves a static per-layer problem; we solve a global dynamic prediction problem. The two are weakly correlated (cosine similarity 0.196, $R^2$=0.038; \S\ref{sec:experiments}).
+SPON solves a static per-layer problem; we solve a global dynamic prediction problem. The two are weakly correlated (cosine similarity 0.196, $R^2$=0.038; Appendix~\ref{app:spon}).
 
 \paragraph{Activation Function Engineering.}
 ReLU Strikes Back~\cite{mirzadeh2024relu} replaces SiLU with ReLU for $>$90\% natural sparsity; TurboSparse~\cite{song2024turbosparse} and ProSparse~\cite{song2025prosparse} engineer extreme sparsity through activation modifications; the Sparsing Law~\cite{luo2024sparsinglaw} formalizes how activation density increases with training compute.

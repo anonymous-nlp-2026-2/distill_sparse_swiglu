@@ -36,7 +36,7 @@ The KL predictor protects L14--L18 (14--18\% sparsity vs.\ 32\% global mean; App
 \paragraph{Knowledge-Task Regression: Hypothesis.}
 Constraint experiments (Appendix~\ref{app:constraint}) show allocation contributes: removing the learned valley improves MMLU +3.4pp and GSM8K +1.6pp. A C4-trained control (Appendix~\ref{app:c4_control}) does not alleviate the regression (MMLU 40.0\%, GSM8K 4.1\% vs.\ 40.7\%, 7.5\%), suggesting the deficit is structural to the optimization objective rather than training data composition. Both loss-inherent (mode-covering sacrifices rare activations) and allocation-induced factors likely contribute; disentangling them requires neuron-level attribution beyond our scope. % exp_id: constraint_remove_valley, c4_control_eval
 
-At 50\%, the PPL advantage widens (11.92 vs.\ 23.90, 50\% reduction) and generalizes to C4 (Appendix~\ref{app:ood}), but all methods collapse to near-random on MMLU and GSM8K ($\leq$2.7\%); no allocation strategy recovers at this capacity limit. % exp_id: bench_kl50_global, kl50_global_s123_downstream_v2, kl50_global_s456_eval, d030_kl50_uniform, multi_seed_kl50_global
+At 50\%, the PPL advantage widens (11.92 vs.\ 23.90, 50\% reduction) and generalizes to C4 (Appendix~\ref{app:ood}), but all methods collapse to near-random on MMLU ($\leq$29\%) and GSM8K ($\leq$2.7\%); no allocation strategy recovers at this capacity limit. % exp_id: bench_kl50_global, kl50_global_s123_downstream_v2, kl50_global_s456_eval, d030_kl50_uniform, multi_seed_kl50_global
 
 \begin{table}[t]
 \centering

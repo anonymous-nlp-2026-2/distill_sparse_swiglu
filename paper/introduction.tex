@@ -16,7 +16,7 @@ At 50\%, the perplexity advantage widens (50\% over TEAL), but downstream reason
 
 Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} (3-seed) confirms the PPL advantage ($-$17.3\%) with directional commonsense gains but tied MMLU; preliminary evaluation on Qwen-2.5-14B~\cite{qwen2024qwen25} shows consistent PPL improvement but reasoning decline (GSM8K $-$19.9pp, $\sigma$=5.3pp; MMLU $-$2.8pp).
 This paper is primarily an empirical study characterizing how the training objective shapes sparsity prediction quality across allocation strategies, sparsity levels, and model scales. The central finding---that output-distribution alignment consistently and substantially outperforms per-neuron classification for learned sparsity---is the paper's contribution. Without sparse kernel support, the predictor adds 6.4\% latency overhead; wall-clock speedup is not addressed (Appendix~\ref{app:latency}).
-While individual components (KL divergence, Gumbel-Sigmoid relaxation) are established techniques, their application to contextual activation sparsity prediction has not been explored, and the resulting empirical behaviors---KL-discovered masks diverge 68\% from magnitude targets yet reduce PPL by 14.5\%---are not predictable from the component properties alone.
+While individual components (KL divergence, Gumbel-Sigmoid relaxation) are established techniques, their application to contextual activation sparsity prediction has not been explored, and the resulting empirical behaviors---KL-discovered masks diverge 46--68\% from magnitude targets yet reduce PPL by 14.5\%---are not predictable from the component properties alone.
 
 Our contributions are:
 \begin{itemize}[nosep,leftmargin=*]
