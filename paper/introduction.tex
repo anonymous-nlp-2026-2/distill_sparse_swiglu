@@ -1,5 +1,13 @@
 \section{Introduction}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.82\columnwidth,trim=0 10 0 15,clip]{fig1_overview.pdf}
+\caption{Method overview: a lightweight per-layer predictor produces importance scores trained via KL divergence with Gumbel-Sigmoid relaxation. At inference, scores feed TEAL's global top-$k$ allocation without compensation networks.}
+\label{fig:overview}
+\vspace{-6pt}
+\end{figure}
+
 How the training objective shapes learned sparsity prediction quality is an open question for SwiGLU LLMs~\cite{shazeer2020glu}. SwiGLU FFN blocks exhibit high contextual sparsity, but their gated activation makes importance prediction challenging: neuron importance depends on both gate and up-projection values, a target that magnitude-based methods handle suboptimally.
 Learned sparsity predictors~\cite{liu2023dejavu,gautam2026fastforward} exploit this property by training small networks to anticipate which neurons are important, but they predominantly rely on binary cross-entropy (BCE) loss, treating each neuron as an independent classification target.
 Yet at inference, sparsity budgets are allocated globally: the TEAL (training-free activation sparsity;~\citealp{liu2025teal}) top-$k$ mechanism ranks all neurons across all layers and retains only those above a model-wide threshold.
@@ -25,11 +33,3 @@ Our contributions are:
 \item \emph{Diagnostic:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; per-layer controls suggest task-dependent coupling effects (\S\ref{sec:perlayer});
 \item \emph{Practical:} KL-derived masks render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
 \end{itemize}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.75\columnwidth,trim=0 10 0 15,clip]{fig1_overview.pdf}
-\caption{Method overview: a lightweight per-layer predictor produces importance scores trained via KL divergence with Gumbel-Sigmoid relaxation. At inference, scores feed TEAL's global top-$k$ allocation without compensation networks.}
-\label{fig:overview}
-\vspace{-6pt}
-\end{figure}

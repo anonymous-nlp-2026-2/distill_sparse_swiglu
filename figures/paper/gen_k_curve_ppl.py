@@ -91,8 +91,9 @@ legend_elements = [
            label='TEAL baseline', linewidth=1.0),
 ]
 ax.legend(handles=legend_elements, loc='lower left', frameon=True,
-          fancybox=False, edgecolor='#DDDDDD', fontsize=6.5,
-          bbox_to_anchor=(0.02, 0.02), handletextpad=0.4)
+          fancybox=False, edgecolor='#DDDDDD', fontsize=5.5,
+          bbox_to_anchor=(0.02, 0.02), handletextpad=0.3,
+          borderpad=0.3, labelspacing=0.3)
 
 fig.tight_layout()
 fig.savefig(f'{OUT}/k_curve_ppl.pdf')
