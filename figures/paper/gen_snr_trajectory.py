@@ -1,20 +1,38 @@
-#!/usr/bin/env python3
-"""Generate SNR training trajectory figure (KL vs BCE over 1000 steps)."""
+"""Figure A.3: Gradient SNR trajectory — KL vs BCE over 1000 training steps."""
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
 import numpy as np
 
-matplotlib.rcParams.update({
+plt.rcParams.update({
+    'font.family': 'serif',
     'font.size': 9,
-    'axes.labelsize': 10,
-    'axes.titlesize': 10,
+    'axes.labelsize': 9,
     'xtick.labelsize': 8,
     'ytick.labelsize': 8,
-    'legend.fontsize': 8,
-    'font.family': 'serif',
+    'legend.fontsize': 7.5,
+    'figure.dpi': 300,
+    'savefig.dpi': 300,
+    'savefig.bbox': 'tight',
+    'savefig.pad_inches': 0.05,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+    'lines.linewidth': 1.5,
+    'pdf.fonttype': 42,
+    'ps.fonttype': 42,
+    'axes.linewidth': 0.6,
+    'xtick.major.width': 0.6,
+    'ytick.major.width': 0.6,
+    'xtick.major.size': 3,
+    'ytick.major.size': 3,
     'mathtext.fontset': 'cm',
 })
+
+COL_KL  = '#4472C4'
+COL_BCE = '#E05A3A'
+
+OUT = '/home/ubuntu/.agent-ml-research-idea_gen_0509_14/projects/distill_sparse_swiglu/figures/paper'
 
 steps = np.array([0, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000])
 
@@ -62,45 +80,41 @@ bce_ci_hi = np.array([
     2.5027984580046755e-03, 2.554440695303236e-03,
 ])
 
-fig, ax = plt.subplots(figsize=(5, 3.5))
+fig, ax = plt.subplots(figsize=(3.3, 2.5))
 
-ax.plot(steps, kl_mean, color='#4472C4', marker='o', markersize=5,
-        linewidth=1.5, label='Forward KL', zorder=3)
-ax.fill_between(steps, kl_ci_lo, kl_ci_hi, color='#4472C4', alpha=0.15, zorder=2)
+ax.fill_between(steps, kl_ci_lo, kl_ci_hi, color=COL_KL, alpha=0.12, zorder=2)
+ax.plot(steps, kl_mean, color=COL_KL, marker='o', markersize=4,
+        linewidth=1.3, label='Forward KL', zorder=3,
+        markeredgecolor='white', markeredgewidth=0.4)
 
-ax.plot(steps, bce_mean, color='#E05A3A', marker='s', markersize=5,
-        linewidth=1.5, label='BCE', zorder=3)
-ax.fill_between(steps, bce_ci_lo, bce_ci_hi, color='#E05A3A', alpha=0.15, zorder=2)
+ax.fill_between(steps, bce_ci_lo, bce_ci_hi, color=COL_BCE, alpha=0.12, zorder=2)
+ax.plot(steps, bce_mean, color=COL_BCE, marker='s', markersize=4,
+        linewidth=1.3, label='BCE', zorder=3,
+        markeredgecolor='white', markeredgewidth=0.4)
 
 ax.set_yscale('log')
 ax.set_xlabel('Training Step')
 ax.set_ylabel('Gradient SNR')
 ax.set_xlim(-20, 1020)
 
-ax.yaxis.grid(True, color='#DDDDDD', linewidth=0.5, zorder=0)
-ax.xaxis.grid(False)
+ax.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
 ax.set_axisbelow(True)
 
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
-
-ax.legend(loc='upper left', frameon=True, fancybox=False,
-          edgecolor='#CCCCCC', framealpha=0.9)
+ax.legend(loc='lower right', frameon=True, fancybox=False,
+          edgecolor='#DDDDDD', framealpha=0.9)
 
 ax.annotate(
-    'BCE consistently higher SNR\n(signal strength $\\neq$ signal quality)',
+    'BCE: higher SNR\nbut worse masks',
     xy=(400, bce_mean[7]),
-    xytext=(600, 1.2e-02),
-    fontsize=7.5, ha='center',
-    arrowprops=dict(arrowstyle='->', color='#888888', lw=0.8),
+    xytext=(620, 1.5e-02),
+    fontsize=7, ha='center',
+    arrowprops=dict(arrowstyle='->', color='#888888', lw=0.7),
     bbox=dict(boxstyle='round,pad=0.3', facecolor='#FFF8F0',
-              edgecolor='#E05A3A', alpha=0.9, linewidth=0.6),
+              edgecolor='#E0E0E0', alpha=0.9, linewidth=0.5),
 )
 
-fig.tight_layout(pad=0.5)
-
-out_dir = './figures/paper'
-fig.savefig(f'{out_dir}/snr_trajectory.pdf', dpi=300, bbox_inches='tight')
-fig.savefig(f'{out_dir}/snr_trajectory.png', dpi=300, bbox_inches='tight')
-print('Saved snr_trajectory.pdf and snr_trajectory.png')
+fig.tight_layout()
+fig.savefig(f'{OUT}/snr_trajectory.pdf')
+fig.savefig(f'{OUT}/snr_trajectory.png')
+print('Saved snr_trajectory.pdf/.png')
 plt.close()
