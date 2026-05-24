@@ -22,8 +22,8 @@ Our contributions are:
 \begin{itemize}[nosep,leftmargin=*]
 \item \emph{Empirical:} Output-distribution alignment ranking across five losses, with per-layer decomposition showing the signal type gap (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), though confounded by train--inference mismatch (\S\ref{sec:perlayer});
 \item \emph{Empirical:} Cross-scale evidence (7--14B) with task-type split: KL outperforms on PPL and commonsense but shows systematic knowledge regression, structural to output-distribution optimization (C4 control; \S\ref{sec:experiments});
-\item \emph{Analytical:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; per-layer controls suggest task-dependent coupling effects (\S\ref{sec:perlayer});
-\item \emph{Analytical:} KL-derived masks render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
+\item \emph{Diagnostic:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; per-layer controls suggest task-dependent coupling effects (\S\ref{sec:perlayer});
+\item \emph{Practical:} KL-derived masks render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
 \end{itemize}
 
 \begin{figure}[t]
