@@ -65,7 +65,6 @@ Sparsity & Method & PPL$\downarrow$ & ARC-c & WG & MMLU & GSM8K \\
 & KL uniform & 11.92$\pm$0.07 & 33.8$\pm$1.2 & 62.9$\pm$0.1 & 28.0$\pm$0.6 & 2.2$\pm$0.1 \\ % exp_id: bench_kl50_uniform, bench_kl50_uniform_s123, bench_kl50_uniform_s456
 \bottomrule
 \end{tabular}}
-\vspace{-4pt}
 \end{table}
 
 
@@ -109,7 +108,6 @@ Sparsity & Seed & Method & PPL$\downarrow$ & ARC-c & WG & MMLU & GSM8K \\
 & & KL & 11.96 & \textbf{32.59} & 62.35 & \textbf{27.92} & 1.97 \\ % exp_id: c1_kl_teal50u
 \bottomrule
 \end{tabular}}
-\vspace{-4pt}
 \end{table}
 
 At 50\% (s42, earlier oracle), C1 matches KL within 0.79pp, while magnitude-trained BCE yields $2.4\times$ worse PPL (Table~\ref{tab:main}).
@@ -148,19 +146,18 @@ BCE + Gumbel + Penalty & --- & 38.02 & +26.23 \\ % exp_id: bce_gumbel_lagrangian
 BCE + STE & --- & 60.54 & +48.75 \\ % exp_id: bce_ste_s42
 \bottomrule
 \end{tabular}}
-\vspace{-4pt}
 \end{table}
 
 \paragraph{Relaxation, Divergence, and SPON.}
 At 50\%, Gumbel-Sigmoid outperforms STE~\cite{bengio2013ste} by 33.8\% (11.79 vs.\ 15.77); forward KL outperforms JSD (+6.4\%) and reverse KL (+8.6\%), consistent with mode-covering~\cite{gu2024minillm}. % exp_id: ste_baseline_s42, jsd_ablation_s42, reverse_kl_ablation_s42
 At 30\%, forward KL (8.81) and JSD (8.90) are near-identical, both outperforming reverse KL (9.26) and MSE (18.52$\pm$1.68). % exp_id: kl30_ablation_s42, jsd30_ablation_s42, rkl30_ablation_s42, mse30_uniform_s42, mse30_3seed
 KL--JSD near-equivalence suggests the divergence measure matters less than optimizing through the output distribution; coupling scope may provide additional downstream benefits (\S\ref{sec:perlayer}). % exp_id: bce30_uniform_s42, rkl30_downstream_3seed
-\paragraph{Per-Layer KL: Empirical Signal Type vs.\ Coupling Scope.}
+\paragraph{Per-Layer KL: Signal Type vs.\ Coupling Scope.}
 \label{sec:perlayer}
 To isolate cross-layer coupling, we train per-layer KL predictors that mask $K$ random layers per step and compute KL on the full model output, preserving the output-distribution signal without cross-layer gradients.
-The $K$-curve (Figure~\ref{fig:k_curve_ppl}) reveals three empirical patterns at 30\%: (1)~PPL is non-monotonic, with $K{=}2$ worst (10.75$\pm$0.15) due to insufficient per-layer updates and $K{=}16$ best (8.67$\pm$0.02), marginally outperforming E2E (8.81$\pm$0.02); (2)~at $K{=}1$ (no coupling), per-layer KL achieves 9.05$\pm$0.02, within 2.7\% of E2E, while per-layer MSE degrades to 18.52$\pm$1.68 ($2.05\times$ worse); (3)~the signal type\footnote{We use ``signal type'' as shorthand for the training objective's optimization target (output distribution vs.\ intermediate activations); this dimension also entails differences in gradient flow topology and optimization landscape that are not independently controlled.} gap ($K{=}1$ KL 9.05 vs.\ MSE 18.52: 9.47 PPL) exceeds the coupling breadth range ($K{=}16$ 8.67 vs.\ $K{=}2$ 10.75: 2.08 PPL).
-This suggests output-distribution alignment contributes more than coupling scope to PPL, but the decomposition is confounded by train--inference mismatch ($K{=}1$ masks 1/32 layers during training vs.\ all 32 at inference), per-layer update count disparity, and the 50\% failure where $K{=}1$ (34.85) outperforms $K{=}4$ (44.23) while E2E reaches 11.84.
-A 3-seed $K{=}4$ control\footnote{Actual sparsity 29.6\%; per-layer sparsity std=0.003 (near-uniform).} partially deconfounds (Appendix~\ref{app:k4_downstream}): PPL and GSM8K gaps largely close while commonsense gaps (ARC-c, WG) persist, suggesting task-dependent coupling effects; detailed per-task attribution is in Appendices~\ref{app:k4_downstream}--\ref{app:perlayer_downstream}; full K-curve downstream in Appendix~\ref{app:k_curve}. % exp_id: perlayer_kl_30_3seed, perlayer_kl_downstream, mse30_downstream_decomp, perlayer_kl_k4_3seed, perlayer_kl_k4_50_s42, perlayer_kl_50_s42, bench_kl50_global, k_curve_k2_3seed, k_curve_k8_3seed, k_curve_k16_3seed
+The $K$-curve (Figure~\ref{fig:k_curve_ppl}) shows that at $K{=}1$ (no coupling), per-layer KL achieves 9.05$\pm$0.02---within 2.7\% of E2E (8.81)---while per-layer MSE degrades to 18.52$\pm$1.68.
+The signal type gap\footnote{``Signal type'' denotes the optimization target (output distribution vs.\ intermediate activations), which also entails gradient flow and landscape differences not independently controlled.} ($K{=}1$ KL 9.05 vs.\ MSE 18.52: 9.47 PPL) exceeds the coupling breadth range ($K{=}16$ best 8.67 vs.\ $K{=}2$ worst 10.75: 2.08 PPL), suggesting output-distribution alignment contributes more than coupling scope, though confounded by train--inference mismatch and update count disparity (\S\ref{app:k4_downstream}).
+A $K{=}4$ control (3-seed) partially deconfounds: PPL and GSM8K gaps close while commonsense gaps persist, suggesting task-dependent coupling (Appendices~\ref{app:k4_downstream}--\ref{app:perlayer_downstream}). % exp_id: perlayer_kl_30_3seed, perlayer_kl_downstream, mse30_downstream_decomp, perlayer_kl_k4_3seed, perlayer_kl_k4_50_s42, perlayer_kl_50_s42, bench_kl50_global, k_curve_k2_3seed, k_curve_k8_3seed, k_curve_k16_3seed
 
 \begin{figure}[t]
 \centering
