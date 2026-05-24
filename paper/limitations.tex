@@ -2,5 +2,5 @@
 
 Our findings are bounded by three limitations.
 \textbf{Sparsity sweet spot.} 30\% is the lowest-degradation level; at 50\%, all methods collapse to near-random on reasoning tasks, and a separate predictor must be retrained per target.
-\textbf{Knowledge-intensive regression.} KL consistently underperforms on MMLU and GSM8K across scales (8B: $-$5.2pp MMLU; 14B: $-$20pp GSM8K), suggesting output-distribution objectives systematically sacrifice reasoning-critical pathways.
+\textbf{Knowledge-intensive regression.} KL consistently underperforms on MMLU and GSM8K across scales (8B: $-$5.2pp MMLU; 14B: $-$21pp GSM8K), suggesting output-distribution objectives systematically sacrifice reasoning-critical pathways.
 \textbf{Evaluation scope.} All predictors train on WikiText-103; C4 evaluation shows preserved KL advantage but $31\times$ higher cross-seed variance. Open-ended generation (e.g., MT-Bench) and contexts beyond 2048 tokens remain untested.

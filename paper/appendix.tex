@@ -322,9 +322,10 @@ TEAL & 8.73 & 56.83 & \textbf{72.69} & \textbf{71.83} & 49.51 & 70.51 & 74.70 \\
 BCE & 8.76 & \textbf{57.59} & 72.61 & 71.67 & \textbf{53.07} & 53.43 & 68.28 \\ % exp_id: qwen14b_bce30_s42_eval
 \midrule
 \multicolumn{8}{l}{\emph{Uniform allocation}} \\
-KL (Ours) & \textbf{7.90} & 53.50 & \textbf{72.82} & 63.55 & 32.0$\pm$5.2 & \textbf{72.68$\pm$0.2} & \textbf{76.01$\pm$1.1} \\ % exp_id: qwen14b_kl30_uniform (3-seed s42/s123/s456)
+KL (Ours) & \textbf{7.90} & 53.50 & \textbf{72.82} & 63.55 & 30.9$\pm$6.8$^*$ & \textbf{72.68$\pm$0.2} & \textbf{76.01$\pm$1.1} \\ % exp_id: qwen14b_kl30_uniform (2-seed s42/s456; s123 eval incomplete)
 TEAL & 8.01 & \textbf{55.29} & 69.85 & \textbf{66.34} & \textbf{52.1} & 67.72 & 74.70 \\ % exp_id: qwen14b_teal30_uniform
 \bottomrule
+\multicolumn{8}{l}{\footnotesize $^*$GSM8K: $n{=}2$ (s42/s456); s123 eval incomplete.} \\
 \end{tabular}}
 \end{table}
 
@@ -347,7 +348,7 @@ Sparsity & Allocation & PPL$\downarrow$ & MMLU \\
 & Uniform & \textbf{8.81$\pm$0.02} & \textbf{40.7$\pm$1.3} \\ % exp_id: bench_kl30_uniform
 \midrule
 \multirow{2}{*}{50\%}
-& Global & \textbf{11.84$\pm$0.15} & \textbf{28.3$\pm$0.7} \\ % exp_id: bench_kl50_global, kl50_global_s123_downstream_v2, kl50_global_s456_eval
+& Global & \textbf{11.84$\pm$0.15} & \textbf{28.3$\pm$0.7} \\ % exp_id: bench_kl50_global, kl50_global_s123_reeval, kl50_global_s123_downstream_v2, kl50_global_s456_eval
 & Uniform & 11.92$\pm$0.07 & 28.0$\pm$0.6 \\ % exp_id: multi_seed_kl50_uniform
 \bottomrule
 \end{tabular}

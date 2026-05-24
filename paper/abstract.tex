@@ -1,6 +1,6 @@
 Learned sparsity predictors for SwiGLU LLMs predominantly use binary cross-entropy (BCE), training each neuron independently, yet inference allocates budgets globally via top-$k$ ranking.
 We train lightweight predictors ($<$1\% of base parameters) with forward KL divergence, coupling all mask decisions through the output distribution.
-On LLaMA-3.1-8B at 30\% sparsity, the KL predictor reduces perplexity by 14.5\% over TEAL at matched sparsity, with directional commonsense gains ($n{=}3$) but knowledge-intensive regression (MMLU $-$5.2pp on 8B; GSM8K $-$20.1pp on 14B); post-hoc compensation (+67.2M params) becomes redundant.
+On LLaMA-3.1-8B at 30\% sparsity, the KL predictor reduces perplexity by 14.5\% over TEAL at matched sparsity, with directional commonsense gains ($n{=}3$) but knowledge-intensive regression (MMLU $-$5.2pp on 8B; GSM8K $-$21.2pp on 14B); post-hoc compensation (+67.2M params) becomes redundant.
 Output-distribution optimization yields masks that diverge 46--68\% from magnitude-based targets; a target-swap ablation suggests these discovered patterns carry most of the quality information: BCE trained on KL-derived targets approaches KL-level PPL (PPL gap $\leq$0.65pp; 3-seed, 30\%).
 Signal type (output-distribution vs.\ intermediate loss) may account for a substantial portion of the PPL gap at moderate sparsity (30\%) (upper bound; \S\ref{sec:perlayer}).
 On downstream tasks, cross-layer coupling contributes substantially for commonsense reasoning but minimally for mathematical reasoning (3-seed $K{=}4$-corrected decomposition).
