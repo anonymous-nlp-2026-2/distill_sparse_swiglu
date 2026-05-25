@@ -66,12 +66,12 @@ ret_70 = np.array([
 
 fig, ax = plt.subplots(figsize=(3.3, 2.5))
 
-ax.plot(layers, ret_30, 'o-', color=COL_30, markersize=3.5, linewidth=1.2,
-        label='30% sparsity', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
-ax.plot(layers, ret_50, 's-', color=COL_50, markersize=3.2, linewidth=1.2,
-        label='50% sparsity', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
-ax.plot(layers, ret_70, '^-', color=COL_70, markersize=3.2, linewidth=1.2,
-        label='70% sparsity', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
+ax.plot(layers, ret_30, 'o-', color=COL_30, markersize=2.8, linewidth=1.2,
+        label='30%', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
+ax.plot(layers, ret_50, 's-', color=COL_50, markersize=2.5, linewidth=1.2,
+        label='50%', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
+ax.plot(layers, ret_70, '^-', color=COL_70, markersize=2.5, linewidth=1.2,
+        label='70%', markeredgecolor='white', markeredgewidth=0.3, zorder=3)
 
 for sp, y_val, col in [(0.7, 0.7, COL_30), (0.5, 0.5, COL_50), (0.3, 0.3, COL_70)]:
     ax.axhline(y=y_val, color=col, linestyle=':', linewidth=0.7, alpha=0.4)
@@ -98,9 +98,10 @@ ax.set_xticks(np.arange(0, 32, 4))
 ax.yaxis.grid(True, color='#E0E0E0', linewidth=0.4, zorder=0)
 ax.set_axisbelow(True)
 
-ax.legend(loc='upper right', frameon=True, fancybox=False,
-          edgecolor='#DDDDDD', fontsize=6.5, ncol=1,
-          bbox_to_anchor=(0.98, 0.98), handletextpad=0.4)
+ax.legend(loc='lower left', frameon=True, fancybox=False,
+          edgecolor='#DDDDDD', fontsize=5.5, ncol=3,
+          bbox_to_anchor=(0.02, 0.02), handletextpad=0.3,
+          columnspacing=0.8, handlelength=1.5, markerscale=0.7)
 
 fig.tight_layout()
 fig.savefig(f'{OUT}/per_layer_retention_chart.pdf')

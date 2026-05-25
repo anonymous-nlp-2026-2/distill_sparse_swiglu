@@ -204,12 +204,7 @@ $\Delta$ & $-$0.4 & +0.7 & +0.8 & $-$1.1 & $-$0.2 & $-$0.8 \\
 \section{Per-Layer Retention Analysis}
 \label{app:retention}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\columnwidth]{per_layer_retention_chart.pdf}
-\caption{Per-layer neuron retention under global top-$k$ allocation at 30\%, 50\%, and 70\% sparsity. Dashed lines indicate uniform retention baselines. Late layers (L24--31) are consistently starved due to long-tailed activation distributions, with retention dropping to 28.4\% (L31) even at 30\% sparsity. At 70\%, starvation extends to mid-layers (L10--12: 16.7--20.1\%), explaining the transition to the capacity-limited regime.}
-\label{fig:retention}
-\end{figure}
+Figure~\ref{fig:retention} (main text) shows per-layer neuron retention under global top-$k$ allocation. Late layers (L24--31) are consistently starved due to long-tailed activation distributions, with retention dropping to 28.4\% (L31) even at 30\% sparsity. At 70\%, starvation extends to mid-layers (L10--12: 16.7--20.1\%), explaining the transition to the capacity-limited regime.
 
 
 \section{Training Stability}
@@ -241,7 +236,7 @@ The only difference is the loss target: per-layer $\|\mathbf{W}_d^{(\ell)}(\tild
 This controlled comparison isolates the effect of output-distribution alignment: all three predictors see identical data in identical order with identical architectures; only the loss function differs. % exp_id: mse30_uniform_s42, mse50_uniform_s42
 
 MSE uses $\lambda_{\max}{=}1000$ (vs.\ KL's 5000) because MSE's per-layer gradient magnitude is approximately $5\times$ larger than KL's end-to-end gradient, requiring proportionally less penalty pressure to achieve comparable sparsity control. Both reach their target sparsity within 110 steps.
-At 50\% target, MSE converges to the target sparsity for seed 42; however, with seed 123, sparsity reaches only 5.1\% under the same $\lambda_{\max}$ cap (eval PPL$=$15{,}789, random-level), indicating high sensitivity to initialization---a failure mode not observed with KL-based losses.
+At 50\% target, MSE converges to the target sparsity for seed 42; however, with seed 123, sparsity reaches only 5.1\% under the same $\lambda_{\max}$ cap (eval PPL$=$15{,}789, random-level), indicating high sensitivity to initialization, a failure mode not observed with KL-based losses.
 At 30\%, MSE achieves 27.7\% actual sparsity for s42 (gap 2.3pp).
 The 3-seed MSE mean (18.52$\pm$1.68; s42=20.43, s123=17.73, s456=17.39) is still $1.7\times$ worse than TEAL (10.82), confirming that the performance deficit stems from the loss function, not insufficient sparsity pressure.
 
@@ -395,7 +390,7 @@ Sparsity & Allocation & PPL$\downarrow$ & ARC-c & WG & MMLU & GSM8K \\
 \section{Mask Pattern Visualization}
 \label{app:mask_viz}
 
-Figure~\ref{fig:mask_heatmap} shows per-layer Jaccard distance between KL-derived and magnitude-based masks at 30\% and 50\% sparsity.
+Figure~\ref{fig:mask_heatmap} (main text) shows per-layer Jaccard distance between KL-derived and magnitude-based masks at 30\% and 50\% sparsity.
 Figure~\ref{fig:scatter} shows per-neuron importance scores at layer 16.
 Figure~\ref{fig:mask_comparison} shows binary mask comparisons at layers 2, 16, and 28.
 
@@ -405,13 +400,6 @@ Figure~\ref{fig:mask_comparison} shows binary mask comparisons at layers 2, 16, 
 \caption{KL vs.\ magnitude importance scores for layer 16 neurons at 50\% sparsity. 41\% of neurons fall in disagreement quadrants where one method selects a neuron the other discards.}
 \label{fig:scatter}
 \end{figure}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{mask_divergence_heatmap.pdf}
-\caption{Per-layer Jaccard distance between KL-derived and magnitude-based masks at 30\% and 50\% sparsity (64 samples, 131K tokens). Divergence peaks in layers 24--28 (Jaccard distance $>$0.73 at 50\%) and increases with sparsity across all layers.}
-\label{fig:mask_heatmap}
-\end{figure*}
 
 \begin{figure*}[t]
 \centering
@@ -480,7 +468,7 @@ SPON~\cite{xu2025spon} distills a per-layer bias via KL but cannot adapt to per-
 DejaVu~\cite{liu2023dejavu} and FastForward~\cite{gautam2026fastforward} achieve per-token granularity but use BCE, where each neuron's gradient is independent of other mask states.
 D2DMoE~\cite{szatkowski2024d2dmoe} provides intermediate coupling (MSE on hidden states) but not end-to-end output effects.
 We define \emph{output-distribution alignment} as whether the training loss optimizes a quantity that composes across layers.
-KL on output logits directly optimizes next-token prediction loss, which does not suffer from error composition; per-layer MSE minimizes reconstruction error independently at each layer, but layer-wise optima do not compose---a mask minimizing FFN output error at layer $\ell$ may amplify errors in layers $\ell{+}1 \ldots L$.
+KL on output logits directly optimizes next-token prediction loss, which does not suffer from error composition; per-layer MSE minimizes reconstruction error independently at each layer, but layer-wise optima do not compose: a mask minimizing FFN output error at layer $\ell$ may amplify errors in layers $\ell{+}1 \ldots L$.
 The SNR analysis (\S\ref{sec:method:gradient}) corroborates this: KL achieves the best masks despite $2.3\times$ lower SNR than BCE, while MSE produces the worst masks.
 The framework predicts that losses operating on output-level quantities should outperform intermediate-level losses, a hypothesis consistent with our MSE results and testable with alternative output-level objectives.
 
@@ -573,7 +561,7 @@ Remove valley & 8.76 & 39.3 & 44.0 & 9.0 \\
 
 Protecting late layers (L22--L28) does not improve knowledge-intensive metrics despite reducing their sparsity from 48--57\% to $\leq$30\%, while worsening PPL by 5.2\%.
 Conversely, removing the protection valley (forcing L14--L18 to 30\% instead of 14--18\%) improves MMLU by +3.4pp and GSM8K by +1.6pp at the cost of ARC-c $-$1.5pp.
-The KL predictor's learned allocation thus represents a task-dependent trade-off---prioritizing commonsense reasoning via middle-layer protection---rather than a uniformly optimal pattern.
+The KL predictor's learned allocation thus represents a task-dependent trade-off, prioritizing commonsense reasoning via middle-layer protection, rather than a uniformly optimal pattern.
 This allocation trade-off also explains the $K{=}4$ MMLU anomaly (\S\ref{app:k4_downstream}): $K{=}4$'s near-uniform learned sparsity (std=0.003) inherently removes the valley, producing MMLU=43.5 comparable to the remove-valley condition (44.0).
 
 \section{Per-Layer Sparsity Distribution}

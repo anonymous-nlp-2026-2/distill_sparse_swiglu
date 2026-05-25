@@ -1,4 +1,4 @@
-\begin{thebibliography}{62}
+\begin{thebibliography}{40}
 \providecommand{\natexlab}[1]{#1}
 
 \bibitem[{Agarwal et~al.(2024)Agarwal, Vieillard, Zhou, Stanczyk, Ramos, Geist,
@@ -19,15 +19,6 @@ Yash Akhauri, Ahmed~F AbouElhamayed, Jordan Dotzel, Zhiru Zhang, Alexander~M
 \newblock In \emph{Proceedings of the Conference on Empirical Methods in
   Natural Language Processing (EMNLP)}.
 
-\bibitem[{Alizadeh et~al.(2024)Alizadeh, Mirzadeh, Belenko, Khatamifard, Cho,
-  Mundo, Rastegari, and Farajtabar}]{alizadeh2024llmflash}
-Keivan Alizadeh, Iman Mirzadeh, Dmitry Belenko, Karen Khatamifard, Minsik Cho,
-  Carlo C~Del Mundo, Mohammad Rastegari, and Mehrdad Farajtabar. 2024.
-\newblock {LLM} in a flash: Efficient large language model inference with
-  limited memory.
-\newblock In \emph{Proceedings of the 41st International Conference on Machine
-  Learning (ICML)}.
-
 \bibitem[{Ashkboos et~al.(2024)Ashkboos, Croci, do~Nascimento, Hoefler, and
   Hensman}]{ashkboos2024slicegpt}
 Saleh Ashkboos, Maximilian~L. Croci, Marcelo~Gennari do~Nascimento, Torsten
@@ -44,13 +35,6 @@ Yoshua Bengio, Nicholas L\'{e}onard, and Aaron Courville. 2013.
   gradients through stochastic neurons for conditional computation}.
 \newblock \emph{arXiv preprint arXiv:1308.3432}.
 
-\bibitem[{Cheng et~al.(2025)Cheng, Guan, Ding, Hu, Wei, Yuan, Shen, Chen, and
-  Gong}]{cheng2025mone}
-Runxi Cheng, Yuchen Guan, Yucheng Ding, Qingguo Hu, Yongxian Wei, Chun Yuan,
-  Yelong Shen, Weizhu Chen, and Yeyun Gong. 2025.
-\newblock \href {https://arxiv.org/abs/2510.05781} {Mixture of neuron experts}.
-\newblock \emph{arXiv preprint arXiv:2510.05781}.
-
 \bibitem[{Dhar et~al.(2024)Dhar, Deng, Islam, Nasif, Zhao, and
   Suo}]{dhar2024activation}
 Nobel Dhar, Bobin Deng, Md~Romyull Islam, Kazi Fahim~Ahmad Nasif, Liang Zhao,
@@ -58,15 +42,6 @@ Nobel Dhar, Bobin Deng, Md~Romyull Islam, Kazi Fahim~Ahmad Nasif, Liang Zhao,
 \newblock \href {https://arxiv.org/abs/2412.12178} {Activation sparsity
   opportunities for compressing general large language models}.
 \newblock \emph{arXiv preprint arXiv:2412.12178}.
-
-\bibitem[{Dhar et~al.(2025)Dhar, Deng, Islam, Zhang, Nasif, and
-  Suo}]{dhar2025clustering}
-Nobel Dhar, Bobin Deng, Md~Romyull Islam, Xinyue Zhang, Kazi Fahim~Ahmad Nasif,
-  and Kun Suo. 2025.
-\newblock \href {https://arxiv.org/abs/2507.14179} {A sparsity predicting
-  approach for large language models via activation pattern clustering}.
-\newblock In \emph{Proceedings of the International Conference on Parallel
-  Processing (Euro-Par)}.
 
 \bibitem[{Fang et~al.(2024)Fang, Yin, Muralidharan, Heinrich, Pool, Kautz,
   Molchanov, and Wang}]{fang2024maskllm}
@@ -85,26 +60,12 @@ Marco Federici, Davide Belli, Mart van Baalen, Amir Jalalirad, Andrii Skliar,
   using dynamic input pruning and cache-aware masking}.
 \newblock In \emph{Proceedings of Machine Learning and Systems (MLSys)}.
 
-\bibitem[{Fedus et~al.(2022)Fedus, Zoph, and Shazeer}]{fedus2022switch}
-William Fedus, Barret Zoph, and Noam Shazeer. 2022.
-\newblock \href {https://arxiv.org/abs/2101.03961} {Switch transformers:
-  Scaling to trillion parameter models with simple and efficient sparsity}.
-\newblock \emph{Journal of Machine Learning Research}, 23(120):1--40.
-
 \bibitem[{Frantar and Alistarh(2023)}]{frantar2023sparsegpt}
 Elias Frantar and Dan Alistarh. 2023.
 \newblock \href {https://arxiv.org/abs/2301.00774} {Sparsegpt: Massive language
   models can be accurately pruned in one-shot}.
 \newblock In \emph{Proceedings of the International Conference on Machine
   Learning (ICML)}.
-
-\bibitem[{Fu et~al.(2024)Fu, Cho, Merth, Mehta, Rastegari, and
-  Najibi}]{fu2024lazyllm}
-Qichen Fu, Minsik Cho, Thomas Merth, Sachin Mehta, Mohammad Rastegari, and
-  Mahyar Najibi. 2024.
-\newblock {LazyLLM}: Dynamic token pruning for efficient long context {LLM}
-  inference.
-\newblock \emph{arXiv preprint arXiv:2407.14057}.
 
 \bibitem[{Gautam et~al.(2026)Gautam, Gagrani, Park, Lee, Lott, and
   Reddy}]{gautam2026fastforward}
@@ -173,28 +134,12 @@ Albert~Q. Jiang, Alexandre Sablayrolles, Arthur Mensch, Chris Bamford,
 \newblock \href {https://arxiv.org/abs/2310.06825} {Mistral 7b}.
 \newblock \emph{arXiv preprint arXiv:2310.06825}.
 
-\bibitem[{Khaki et~al.(2025)Khaki, Li, Guo, Zhu, Plataniotis, Yazdanbakhsh,
-  Keutzer, Han, and Liu}]{khaki2025sparselora}
-Samir Khaki, Xiuyu Li, Junxian Guo, Ligeng Zhu, Konstantinos~N. Plataniotis,
-  Amir Yazdanbakhsh, Kurt Keutzer, Song Han, and Zhijian Liu. 2025.
-\newblock \href {https://proceedings.mlr.press/v267/khaki25a.html} {Sparselora:
-  Accelerating llm fine-tuning with contextual sparsity}.
-\newblock In \emph{Proceedings of the International Conference on Machine
-  Learning (ICML)}.
-
 \bibitem[{Kim and Rush(2016)}]{kim2016sequencekd}
 Yoon Kim and Alexander~M. Rush. 2016.
 \newblock \href {https://arxiv.org/abs/1606.07947} {Sequence-level knowledge
   distillation}.
 \newblock In \emph{Proceedings of the Conference on Empirical Methods in
   Natural Language Processing (EMNLP)}.
-
-\bibitem[{Ko et~al.(2024)Ko, Kim, Chen, and Yun}]{ko2024distillm}
-Jongwoo Ko, Sungnyun Kim, Tianyi Chen, and Se-Young Yun. 2024.
-\newblock \href {https://arxiv.org/abs/2402.03898} {Distillm: Towards
-  streamlined distillation for large language models}.
-\newblock In \emph{Proceedings of the International Conference on Machine
-  Learning (ICML)}.
 
 \bibitem[{Lee et~al.(2024)Lee, Lee, Zhang, Tiwari, and
   Mirhoseini}]{lee2024cats}
@@ -203,14 +148,6 @@ Donghyun Lee, Je-Yong Lee, Genghan Zhang, Mo~Tiwari, and Azalia Mirhoseini.
 \newblock \href {https://arxiv.org/abs/2404.08763} {Cats: Contextually-aware
   thresholding for sparsity in large language models}.
 \newblock \emph{arXiv preprint arXiv:2404.08763}.
-
-\bibitem[{Lin et~al.(2024)Lin, Tang, Tang, Yang, Chen, Wang, Xiao, Dang, Gan,
-  and Han}]{lin2024awq}
-Ji~Lin, Jiaming Tang, Haotian Tang, Shang Yang, Wei-Ming Chen, Wei-Chen Wang,
-  Guangxuan Xiao, Xingyu Dang, Chuang Gan, and Song Han. 2024.
-\newblock \href {https://arxiv.org/abs/2306.00978} {{AWQ}: Activation-aware
-  weight quantization for {LLM} compression and acceleration}.
-\newblock In \emph{Proceedings of Machine Learning and Systems (MLSys)}.
 
 \bibitem[{Liu et~al.(2025)Liu, Ponnusamy, Cai, Guo, Kim, and
   Athiwaratkun}]{liu2025teal}
@@ -244,14 +181,6 @@ Christos Louizos, Max Welling, and Diederik~P. Kingma. 2018.
 \newblock In \emph{Proceedings of the International Conference on Learning
   Representations (ICLR)}.
 
-\bibitem[{Luo et~al.(2024)Luo, Song, Han, Chen, Xiao, Meng, Deng, Wei, Liu, and
-  Sun}]{luo2024sparsinglaw}
-Yuqi Luo, Chenyang Song, Xu~Han, Yingfa Chen, Chaojun Xiao, Xiaojun Meng, Liqun
-  Deng, Jiansheng Wei, Zhiyuan Liu, and Maosong Sun. 2024.
-\newblock \href {https://arxiv.org/abs/2411.02335} {Sparsing law: Towards large
-  language models with greater activation sparsity}.
-\newblock \emph{arXiv preprint arXiv:2411.02335}.
-
 \bibitem[{Maddison et~al.(2017)Maddison, Mnih, and Teh}]{maddison2017concrete}
 Chris~J. Maddison, Andriy Mnih, and Yee~Whye Teh. 2017.
 \newblock \href {https://arxiv.org/abs/1611.00712} {The concrete distribution:
@@ -276,16 +205,6 @@ Iman Mirzadeh, Keivan Alizadeh, Sachin Mehta, Carlo C~Del Mundo, Oncel Tuzel,
 \newblock In \emph{Proceedings of the International Conference on Learning
   Representations (ICLR)}.
 
-\bibitem[{Muralidharan et~al.(2024)Muralidharan, Sreenivas, Joshi, Chochowski,
-  Patwary, Shoeybi, Catanzaro, Kautz, and Molchanov}]{muralidharan2024minitron}
-Saurav Muralidharan, Sharath~Turuvekere Sreenivas, Raviraj Joshi, Marcin
-  Chochowski, Mostofa Patwary, Mohammad Shoeybi, Bryan Catanzaro, Jan Kautz,
-  and Pavlo Molchanov. 2024.
-\newblock \href {https://arxiv.org/abs/2407.14679} {Compact language models via
-  pruning and knowledge distillation}.
-\newblock In \emph{Advances in Neural Information Processing Systems
-  (NeurIPS)}.
-
 \bibitem[{Raffel et~al.(2020)Raffel, Shazeer, Roberts, Lee, Narang, Matena,
   Zhou, Li, and Liu}]{raffel2020c4}
 Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael
@@ -294,14 +213,6 @@ Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael
   transfer learning with a unified text-to-text transformer}.
 \newblock \emph{Journal of Machine Learning Research}, 21(140):1--67.
 
-\bibitem[{Raposo et~al.(2024)Raposo, Ritter, Richards, Lillicrap, Humphreys,
-  and Santoro}]{raposo2024mod}
-David Raposo, Sam Ritter, Blake Richards, Timothy Lillicrap, Peter~Conway
-  Humphreys, and Adam Santoro. 2024.
-\newblock \href {https://arxiv.org/abs/2404.02258} {Mixture-of-depths:
-  Dynamically allocating compute in transformer-based language models}.
-\newblock \emph{arXiv preprint arXiv:2404.02258}.
-
 \bibitem[{Sanh et~al.(2019)Sanh, Debut, Chaumond, and
   Wolf}]{sanh2019distilbert}
 Victor Sanh, Lysandre Debut, Julien Chaumond, and Thomas Wolf. 2019.
@@ -309,43 +220,11 @@ Victor Sanh, Lysandre Debut, Julien Chaumond, and Thomas Wolf. 2019.
   version of bert: smaller, faster, cheaper and lighter}.
 \newblock \emph{arXiv preprint arXiv:1910.01108}.
 
-\bibitem[{Serbin et~al.(2026)Serbin, Koshkin, Sun, Bistrigova, and
-  Korikov}]{serbin2026svdcsp}
-Georgii Serbin, Kirill Koshkin, Zhongao Sun, Anastasiya Bistrigova, and C.C.
-  Korikov. 2026.
-\newblock \href {https://arxiv.org/abs/2603.14110} {Svd contextual sparsity
-  predictors for fast llm inference}.
-\newblock \emph{arXiv preprint arXiv:2603.14110}.
-
 \bibitem[{Shazeer(2020)}]{shazeer2020glu}
 Noam Shazeer. 2020.
 \newblock \href {https://arxiv.org/abs/2002.05202} {Glu variants improve
   transformer}.
 \newblock \emph{arXiv preprint arXiv:2002.05202}.
-
-\bibitem[{Shin et~al.(2025{\natexlab{a}})Shin, Yang, and Yi}]{shin2025grasp}
-Jiho Shin, Hoeseok Yang, and Youngmin Yi. 2025{\natexlab{a}}.
-\newblock \href {https://dl.acm.org/doi/10.1109/DAC63849.2025.11132899}
-  {{GRASP}: Group-based prediction of activation sparsity for fast {LLM}
-  inference}.
-\newblock In \emph{Proceedings of the 62nd ACM/IEEE Design Automation
-  Conference (DAC)}.
-
-\bibitem[{Shin et~al.(2025{\natexlab{b}})Shin, Yang, and
-  Yi}]{shin2025sparseinfer}
-Jiho Shin, Hoeseok Yang, and Youngmin Yi. 2025{\natexlab{b}}.
-\newblock \href {https://arxiv.org/abs/2411.12692} {Sparseinfer: Training-free
-  prediction of activation sparsity for fast llm inference}.
-\newblock In \emph{Proceedings of the Design, Automation \& Test in Europe
-  Conference (DATE)}.
-
-\bibitem[{Shrestha et~al.(2025)Shrestha, Settlemyer, Dapello, and
-  Chen}]{shrestha2025polar}
-Susav Shrestha, Brian Settlemyer, Joel Dapello, and Peng Chen. 2025.
-\newblock \href {https://arxiv.org/abs/2505.14884} {Polar sparsity: High
-  throughput batched {LLM} inferencing with scalable contextual sparsity}.
-\newblock In \emph{Advances in Neural Information Processing Systems
-  (NeurIPS)}.
 
 \bibitem[{Song et~al.(2025)Song, Han, Zhang, Hu, Shi, Li, Chen, Liu, Li, Yang,
   and Sun}]{song2025prosparse}
@@ -393,20 +272,6 @@ Qwen Team. 2024.
 \newblock \href {https://arxiv.org/abs/2412.15115} {Qwen2.5 technical report}.
 \newblock \emph{arXiv preprint arXiv:2412.15115}.
 
-\bibitem[{Wang et~al.(2025)Wang, Shu, and Lin}]{wang2025dynamicsparse}
-Rongxiang Wang, Kangyuan Shu, and Felix~Xiaozhu Lin. 2025.
-\newblock \href {https://arxiv.org/abs/2511.04477} {Enabling dynamic sparsity
-  in quantized {LLM} inference}.
-\newblock \emph{arXiv preprint arXiv:2511.04477}.
-
-\bibitem[{Wei et~al.(2023)Wei, Zhang, Li, Zhang, Gong, Guo, and
-  Liu}]{wei2023outlier}
-Xiuying Wei, Yunchen Zhang, Yuhang Li, Xiangguo Zhang, Ruihao Gong, Jinyang
-  Guo, and Xianglong Liu. 2023.
-\newblock Outlier suppression+: Accurate quantization of large language models
-  by equivalent and effective shifting and scaling.
-\newblock \emph{arXiv preprint arXiv:2304.09145}.
-
 \bibitem[{Wu et~al.(2025{\natexlab{a}})Wu, Tao, Wang, Yang, Zhao, and
   Wong}]{wu2025rethinking}
 Taiqiang Wu, Chaofan Tao, Jiahao Wang, Runming Yang, Zhe Zhao, and Ngai Wong.
@@ -429,51 +294,14 @@ Haotian Xu, Jiannan Yang, Tian Gao, Tsui-Wei Weng, and Tengfei Ma. 2025.
 \newblock In \emph{Proceedings of the International Conference on Machine
   Learning (ICML)}.
 
-\bibitem[{Xue et~al.(2024)Xue, Song, Mi, Chen, Xia, and
-  Chen}]{xue2024powerinfer2}
-Zhiyuan Xue, Yixin Song, Zeyu Mi, Le~Chen, Yubin Xia, and Haibo Chen. 2024.
-\newblock \href {https://arxiv.org/abs/2406.06282} {Powerinfer-2: Fast large
-  language model inference on a smartphone}.
-\newblock \emph{arXiv preprint arXiv:2406.06282}.
-
-\bibitem[{Yang(2026)}]{yang2026wisparse}
-others Yang. 2026.
-\newblock {WiSparse}: Weight-aware mixed activation sparsity for large language
-  models.
-\newblock \emph{arXiv preprint arXiv:2602.14452}.
-
-\bibitem[{Yin et~al.(2024)Yin, Wu, Zhang, Hsieh, Wang, Jia, Li, Jaiswal,
-  Pechenizkiy, Liang, Bendersky, Wang, and Liu}]{yin2024owl}
-Lu~Yin, You Wu, Zhenyu Zhang, Cheng-Yu Hsieh, Yaqing Wang, Yiling Jia, Gen Li,
-  Ajay Jaiswal, Mykola Pechenizkiy, Yi~Liang, Michael Bendersky, Zhangyang
-  Wang, and Shiwei Liu. 2024.
-\newblock \href {https://arxiv.org/abs/2310.05175} {Outlier weighed layerwise
-  sparsity ({OWL}): A missing secret sauce for pruning {LLM}s to high
-  sparsity}.
-\newblock In \emph{Proceedings of the International Conference on Machine
-  Learning (ICML)}.
-
-\bibitem[{Zhang et~al.(2025{\natexlab{a}})Zhang, Shang, Cao, Li, Jiang, Ma,
-  Zheng, Li, and Bian}]{zhang2025cots}
-Yilong Zhang, Junyuan Shang, Huanqi Cao, Shiyao Li, Shuguang Jiang, Lingxiao
-  Ma, Shun Zheng, Cheng Li, and Jiang Bian. 2025{\natexlab{a}}.
-\newblock {COTS}: Connected sparse activation for efficient {LLM} inference.
-\newblock \emph{arXiv preprint arXiv:2502.14475}.
-
-\bibitem[{Zhang et~al.(2025{\natexlab{b}})Zhang, Liu, Tian, Khaitan, Wang, and
+\bibitem[{Zhang et~al.(2025)Zhang, Liu, Tian, Khaitan, Wang, and
   Li}]{zhang2025rsparse}
 Zhenyu Zhang, Zechun Liu, Yuandong Tian, Harshit Khaitan, Zhangyang Wang, and
-  Steven Li. 2025{\natexlab{b}}.
+  Steven Li. 2025.
 \newblock \href {https://arxiv.org/abs/2504.19449} {R-sparse: Rank-aware
   activation sparsity for efficient llm inference}.
 \newblock In \emph{Proceedings of the International Conference on Learning
   Representations (ICLR)}.
-
-\bibitem[{Zheng et~al.(2026)}]{zheng2026acttail}
-Haocheng Zheng and 1 others. 2026.
-\newblock {ActTail}: Heavy-tailed self-regularization for activation sparsity
-  in large language models.
-\newblock \emph{arXiv preprint arXiv:2603.12272}.
 
 \bibitem[{Zhou et~al.(2022)Zhou, Lei, Liu, Du, Huang, Zhao, Dai, Chen, Le, and
   Laudon}]{zhou2022expertchoice}

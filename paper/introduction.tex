@@ -2,30 +2,31 @@
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.82\textwidth,trim=0 15 0 20,clip]{fig1_overview.pdf}
+\includegraphics[width=0.82\textwidth]{fig1_overview.pdf}
 \caption{Method overview: a lightweight per-layer predictor produces importance scores trained via KL divergence with Gumbel-Sigmoid relaxation. At inference, scores feed TEAL's global top-$k$ allocation without compensation networks.}
 \label{fig:overview}
 \end{figure*}
 
-How the training objective shapes learned sparsity prediction quality is an open question for SwiGLU LLMs~\cite{shazeer2020glu}. SwiGLU FFN blocks exhibit high contextual sparsity, but their gated activation makes importance prediction challenging: neuron importance depends on both gate and up-projection values, a target that magnitude-based methods handle suboptimally.
-Learned sparsity predictors~\cite{liu2023dejavu,gautam2026fastforward} exploit this property by training small networks to anticipate which neurons are important, but they predominantly rely on binary cross-entropy (BCE) loss, treating each neuron as an independent classification target.
-Yet at inference, sparsity budgets are allocated globally: the TEAL (training-free activation sparsity;~\citealp{liu2025teal}) top-$k$ mechanism ranks all neurons across all layers and retains only those above a model-wide threshold.
-This mismatch between per-neuron training and global inference allocation has not been formally analyzed.
-Unlike MaskLLM~\cite{fang2024maskllm}, which applies KL to static N:M weight masks, we address contextual activation sparsity where masks must generalize to unseen inputs, vary per token, and coordinate across layers through global allocation.
+Contextual activation sparsity, skipping neurons that contribute negligibly to each token, is an attractive approach to accelerating large language model (LLM) inference in SwiGLU architectures~\cite{shazeer2020glu}.
+Learned predictors~\cite{liu2023dejavu,gautam2026fastforward} train small networks to anticipate which neurons matter, but they universally rely on binary cross-entropy (BCE), treating each neuron as an independent classification target.
+At inference, however, these per-neuron scores feed TEAL~\cite{liu2025teal}, a global top-$k$ mechanism that ranks neurons \emph{jointly} across all layers, retaining only those above a model-wide threshold.
+This creates a fundamental mismatch: predictors are optimized for local per-neuron accuracy but evaluated under global cross-layer allocation.
+The consequences of this misalignment for contextual sparsity prediction remain uninvestigated.
 
-Gradient analysis reveals a structural asymmetry: BCE's gradient $\partial \mathcal{L}_{\text{BCE}} / \partial s_j = \sigma(s_j) - m_j^*$ depends only on neuron $j$, while under KL divergence, the gradient couples each neuron to all others through the downstream Jacobian (\S\ref{sec:method:gradient}).
-KL's coupled gradients discover neuron importance patterns that diverge 68\% from magnitude-based masks (mean per-layer Jaccard distance).
-A target-swap ablation shows KL-discovered mask targets carry most of the quality information: BCE retrained on KL-derived targets approaches KL PPL ($\leq$0.65pp gap, 3-seed), while magnitude-trained BCE yields 28.13$\pm$0.20. Per-layer controls suggest coupling effects are task-dependent, with larger impacts on commonsense than knowledge tasks (\S\ref{sec:perlayer}).
+We close this gap by training sparsity predictors with output-distribution Kullback--Leibler (KL) divergence, which couples all masking decisions through the model's forward pass.
+Under BCE, the gradient for neuron $j$ depends only on $j$'s own activation magnitude; under KL, the chain rule introduces a downstream Jacobian that couples each neuron to every other retained neuron in subsequent layers (\S\ref{sec:method:gradient}).
+This allows the predictor to evaluate each neuron's importance in context, considering how pruning one neuron affects downstream computation when other neurons are simultaneously pruned.
+Unlike MaskLLM~\cite{fang2024maskllm}, which applies KL to static N:M weight masks, our predictors generate contextual masks that vary per token and coordinate across layers through global allocation.
 
-We instantiate a lightweight predictor (75.9M params, $<$1\% of base) trained with forward KL and Gumbel-Sigmoid relaxation~\cite{jang2017gumbel} on LLaMA-3.1-8B~\cite{grattafiori2024llama3}.
-At 30\% sparsity, the predictor reduces TEAL's perplexity by 14.5\% at matched sparsity (8.81 vs.\ 10.30, both at 28.5\%); at 50\%, the advantage widens (50\% over TEAL) but downstream reasoning collapses regardless of method.
-Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} ($-$17.3\%, 3-seed) and Qwen-2.5-14B~\cite{qwen2024qwen25} confirms PPL gains but shows systematic knowledge regression (Qwen-14B GSM8K $-$19.9pp).
-This is primarily an empirical study; the central finding---that output-distribution alignment consistently outperforms per-neuron classification for learned sparsity---is the contribution. Without sparse kernel support, the predictor adds 6.4\% latency overhead (Appendix~\ref{app:latency}).
+The results reveal a surprising picture of what drives quality in learned sparsity prediction.
+On LLaMA-3.1-8B~\cite{grattafiori2024llama3}, our lightweight predictor ($<$1\% of base parameters) trained with forward KL and Gumbel-Sigmoid relaxation~\cite{jang2017gumbel} reduces perplexity (PPL) by 14.5\% over TEAL at 30\% sparsity and renders post-hoc compensation networks redundant.
+More revealingly, the KL objective discovers mask patterns that diverge 68\% from magnitude-based targets, and a target-swap ablation isolates the source: BCE retrained on KL-derived targets recovers comparable perplexity ($\leq$0.65pp gap), suggesting that KL's primary contribution is discovering better mask targets rather than providing end-to-end coupling during training.
+Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} and Qwen-2.5-14B~\cite{qwen2024qwen25} confirms perplexity gains, though knowledge-intensive tasks exhibit systematic regression, a structural limitation we trace to output-distribution optimization (\S\ref{sec:experiments}).
 
-Our contributions are:
+Our contributions:
 \begin{itemize}[nosep,leftmargin=*]
-\item \emph{Empirical:} Output-distribution alignment ranking across five losses, with per-layer decomposition showing the signal type gap (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), though confounded by train--inference mismatch (\S\ref{sec:perlayer});
-\item \emph{Empirical:} Cross-scale evidence (7--14B) with task-type split: KL outperforms on PPL and commonsense but shows systematic knowledge regression, structural to output-distribution optimization (C4 control; \S\ref{sec:experiments});
-\item \emph{Diagnostic:} Target-swap ablation suggests KL-discovered mask targets transfer to BCE; per-layer controls suggest task-dependent coupling effects (\S\ref{sec:perlayer});
-\item \emph{Practical:} KL-derived masks render post-hoc compensation (+67.2M params) redundant at both tested sparsity levels (\S\ref{sec:compensation}).
+\item Output-distribution alignment consistently outperforms per-neuron classification for learned sparsity, ranking first among five losses across two sparsity levels and three architectures;
+\item Per-layer controls reveal that the signal type gap (9.47 PPL) dominates the coupling breadth range (2.08 PPL) at 30\% sparsity, suggesting what predictors optimize for matters more than how neurons interact during training (\S\ref{sec:perlayer});
+\item Target-swap ablation shows KL-discovered mask patterns transfer quality to BCE, isolating the discovered targets, not the training dynamics, as the primary driver;
+\item Task-type analysis across three model families (7--14B) reveals a structural limitation: output-distribution optimization improves commonsense reasoning but degrades knowledge-intensive tasks.
 \end{itemize}
