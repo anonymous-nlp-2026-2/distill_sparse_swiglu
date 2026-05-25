@@ -1,40 +1,41 @@
-# LaTeX intermediates
-paper/main.aux
-paper/main.log
-paper/main.out
-paper/main.blg
-paper/main.fls
-paper/main.fdb_latexmk
-paper/main.synctex.gz
+# LaTeX temp files
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.blg
+*.synctex*
+
+# Paper temp dirs
 paper/_pdf_images/
 paper/_figure_backups/
 
-# PaperBanana temp runs
+# PaperBanana temp dirs
 figures/paper/run_*/
-
-# Duplicates in figures root (canonical copies live in figures/paper/)
-figures/mask_comparison*
-figures/mask_divergence_heatmap*
-figures/neuron_scatter*
-figures/mask_stats_*.json
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 
-# Editor / OS
+# OS
 .DS_Store
-.idea/
-.vscode/
+Thumbs.db
 
-# Local env / secrets
+# Environment
 .env
-.env.local
+.venv/
+venv/
 
-# Experiment outputs
-wandb/
+# ML artifacts
 checkpoints/
+wandb/
 logs/
 runs/
 artifacts/
+distill_tmp/
+
+# IDE
+.vscode/
+.idea/
