@@ -31,6 +31,7 @@ Uniform allocation yields stable downstream (MMLU 40.7$\pm$1.3\%, 3-seed; Append
 \paragraph{Task-Type Split.}
 KL shows directional improvements on commonsense reasoning (ARC-c, WG, HellaSwag, PIQA: 4/4 wins at 30\%; Appendix~\ref{app:downstream}) but underperforms on knowledge tasks (MMLU, GSM8K: 0/2).
 With three seeds, 95\% CIs overlap for individual tasks; we treat PPL ($\sigma{=}0.02$, non-overlapping) as the primary metric.
+The KL predictor learns non-uniform per-layer sparsity, protecting middle layers (L14--18 at 14--18\% vs.\ 32\% mean; Appendix~\ref{app:perlayer_sparsity}).
 Constraint interventions (Appendix~\ref{app:constraint}) confirm a task-dependent trade-off: removing the learned valley improves MMLU +3.4pp but reduces ARC-c $-$1.5pp, consistent with localized factual associations~\cite{geva2023dissecting}. A C4-trained control (Appendix~\ref{app:c4_control}) does not alleviate the regression, suggesting the deficit is structural to output-distribution optimization rather than training data composition. % exp_id: bench_kl30_uniform, teal30_uniform, hellaswag_piqa_kl30_uniform, perlayer_sparsity_analysis, constraint_protect_late, constraint_remove_valley, c4_control_eval
 
 At 50\%, the PPL advantage widens (11.92 vs.\ 23.90, 50\% reduction) and generalizes to C4 (Appendix~\ref{app:ood}), but all methods collapse to near-random on MMLU ($\leq$29\%) and GSM8K ($\leq$2.7\%); no allocation strategy recovers at this capacity limit. % exp_id: bench_kl50_global, kl50_global_s123_downstream_v2, kl50_global_s456_eval, d030_kl50_uniform, multi_seed_kl50_global
@@ -162,7 +163,7 @@ At 30\%, forward KL (8.81) and JSD (8.90) are near-identical, both outperforming
 \label{sec:perlayer}
 To isolate cross-layer coupling, we train per-layer KL predictors masking $K$ random layers per step, computing KL on the full output without cross-layer gradients.
 The $K$-curve (Figure~\ref{fig:k_curve_ppl}) shows per-layer KL ($K{=}1$) achieves 9.05$\pm$0.02, within 2.7\% of E2E (8.81), while per-layer MSE degrades to 18.52$\pm$1.68.
-The signal type gap\footnote{``Signal type'' denotes the optimization target (output distribution vs.\ intermediate activations), which also entails gradient flow and landscape differences not independently controlled.} (9.47 PPL) exceeds the coupling breadth range (2.08 PPL), suggesting output-distribution alignment contributes more than coupling scope, though confounded by train--inference mismatch (\S\ref{app:k4_downstream}).
+The signal type gap\footnote{``Signal type'' denotes the optimization target (output distribution vs.\ intermediate activations), which also entails gradient flow and landscape differences not independently controlled.} (9.47 PPL) exceeds the coupling breadth range (2.08 PPL; full $K$-curve in Appendix~\ref{app:k_curve}), suggesting output-distribution alignment contributes more than coupling scope, though confounded by train--inference mismatch (\S\ref{app:k4_downstream}).
 A $K{=}4$ control partially deconfounds: PPL gaps close while commonsense gaps persist, suggesting task-dependent coupling (Appendices~\ref{app:k4_downstream}--\ref{app:perlayer_downstream}). % exp_id: perlayer_kl_30_3seed, perlayer_kl_downstream, mse30_downstream_decomp, perlayer_kl_k4_3seed, perlayer_kl_k4_50_s42, perlayer_kl_50_s42, bench_kl50_global, k_curve_k2_3seed, k_curve_k8_3seed, k_curve_k16_3seed
 
 \begin{figure}[t]
@@ -176,7 +177,7 @@ A $K{=}4$ control partially deconfounds: PPL gaps close while commonsense gaps p
 
 \paragraph{Compensation Redundancy.}
 \label{sec:compensation}
-FastForward-style compensation~\cite{gautam2026fastforward} (+67.2M params) provides no benefit (Appendices~\ref{app:comp_convergence}--\ref{app:training_convergence}); SPON bias correction is orthogonal (Appendix~\ref{app:spon}). Predictor capacity and temperature sensitivity in Appendix~\ref{app:db_sensitivity}. % exp_id: kl_comp_30_s42, kl_comp_30_s456, kl_comp_50_s42, bce_comp_staged_s42, db_sensitivity_sweep, tau_schedule_sweep, training_steps_sweep
+FastForward-style compensation~\cite{gautam2026fastforward} (+67.2M params) provides no benefit (Appendices~\ref{app:comp_convergence}--\ref{app:training_convergence}); SPON bias correction is orthogonal (Appendix~\ref{app:spon}). Predictor capacity (Appendix~\ref{app:db_sensitivity}) and temperature schedule (Appendix~\ref{app:tau_sensitivity}) show minimal sensitivity. % exp_id: kl_comp_30_s42, kl_comp_30_s456, kl_comp_50_s42, bce_comp_staged_s42, db_sensitivity_sweep, tau_schedule_sweep, training_steps_sweep
 
 
 \subsection{Sparsity Scaling and Regime Analysis}
