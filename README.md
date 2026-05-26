@@ -1,6 +1,8 @@
-# Distill Sparse SwiGLU
+# Output-Distribution Distillation for Contextual Sparsity Prediction in SwiGLU LLMs
 
-Code for the EMNLP 2026 submission "Output-Distribution Distillation for Contextual Sparsity Prediction in SwiGLU LLMs" (anonymous submission).
+Code for the EMNLP 2026 ARR submission (anonymous).
+
+**Abstract:** Learned sparsity predictors accelerate large language model (LLM) inference by anticipating which neurons to skip, but a fundamental mismatch limits their effectiveness: predictors are trained per-neuron via binary cross-entropy while deployed under global top-k allocation that ranks neurons jointly across all layers. We bridge this gap with output-distribution Kullback-Leibler (KL) divergence, which couples all pruning decisions end-to-end through the model's forward pass using Gumbel-Sigmoid relaxation. On LLaMA-3.1-8B, our predictor (<1% of base parameters) reduces perplexity by 14.5% over TEAL at 30% sparsity and renders post-hoc compensation networks redundant. Diagnostic analysis reveals a surprising finding: KL-optimized masks diverge 68% from magnitude-based targets, yet a target-swap ablation shows these discovered patterns, not end-to-end coupling per se, carry most of the quality signal. Cross-architecture evaluation on Mistral-7B and Qwen-2.5-14B confirms perplexity generalization, though knowledge-intensive tasks exhibit directional decline (n=3) at larger scales.
 
 ## Setup
 
@@ -8,7 +10,7 @@ Code for the EMNLP 2026 submission "Output-Distribution Distillation for Context
 pip install -r requirements.txt
 ```
 
-Tested with Python 3.10, PyTorch 2.4 / CUDA 12.4. A single GPU with ~24 GB memory is sufficient for the default Llama-3-8B configuration; multi-GPU is not required.
+Tested with Python 3.10, PyTorch 2.4 / CUDA 12.4. A single GPU with ~24 GB memory is sufficient for the default LLaMA-3.1-8B configuration; multi-GPU is not required.
 
 ## Repository layout
 
@@ -20,8 +22,7 @@ src/                 Core training and evaluation code
   eval_constrained_sparsity.py Downstream / PPL evaluation with sparsity constraints
   compute_jaccard.py          Cross-seed / cross-method mask Jaccard similarity
   benchmark_flashinfer.py     End-to-end latency benchmark via FlashInfer kernels
-scripts/             Auxiliary analysis scripts (gradient SNR, oracle F1, etc.)
-tests/               Unit / regression tests
+R-Sparse/            Modified R-Sparse codebase for baseline comparison
 paper/               LaTeX sources (main.tex is the entry; PDF is included)
 figures/             Generated figures referenced by the paper
 ```
@@ -32,7 +33,7 @@ Per-layer KL distillation (default configuration matching the paper):
 
 ```bash
 python src/train_perlayer_kl.py \
-    --model_name_or_path meta-llama/Meta-Llama-3-8B \
+    --model_name_or_path meta-llama/Llama-3.1-8B \
     --sparsity_target 0.30 \
     --bottleneck_dim 128 \
     --num_steps 10000 \

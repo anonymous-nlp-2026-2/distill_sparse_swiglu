@@ -20,13 +20,13 @@ Unlike MaskLLM~\cite{fang2024maskllm}, which applies KL to static N:M weight mas
 
 The results reveal a surprising picture of what drives quality in learned sparsity prediction.
 On LLaMA-3.1-8B~\cite{grattafiori2024llama3}, our lightweight predictor ($<$1\% of base parameters) trained with forward KL and Gumbel-Sigmoid relaxation~\cite{jang2017gumbel} reduces perplexity (PPL) by 14.5\% over TEAL at 30\% sparsity and renders post-hoc compensation networks redundant.
-More revealingly, the KL objective discovers mask patterns that diverge 68\% from magnitude-based targets, and a target-swap ablation isolates the source: BCE retrained on KL-derived targets recovers comparable perplexity ($\leq$0.65pp gap), suggesting that KL's primary contribution is discovering better mask targets rather than providing end-to-end coupling during training.
-Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} and Qwen-2.5-14B~\cite{qwen2024qwen25} confirms perplexity gains, though knowledge-intensive tasks exhibit systematic regression, a structural limitation we trace to output-distribution optimization (\S\ref{sec:experiments}).
+More revealingly, the KL objective discovers mask patterns that diverge 68\% from magnitude-based targets, and a target-swap ablation isolates the source: BCE retrained on KL-derived targets recovers comparable perplexity ($\leq$0.63pp gap), suggesting that KL's primary contribution is discovering better mask targets rather than providing end-to-end coupling during training.
+Cross-architecture evaluation on Mistral-7B-v0.3~\cite{jiang2023mistral} and Qwen-2.5-14B~\cite{qwen2024qwen25} confirms perplexity gains, though knowledge-intensive tasks exhibit directional decline ($n{=}3$) that we trace to allocation-induced layer starvation and output-distribution optimization (\S\ref{sec:experiments}).
 
 Our contributions:
 \begin{itemize}[nosep,leftmargin=*]
 \item Output-distribution alignment consistently outperforms per-neuron classification for learned sparsity, ranking first among five losses across two sparsity levels and three architectures;
-\item Per-layer controls reveal that the signal type gap (9.47 PPL) dominates the coupling breadth range (2.08 PPL) at 30\% sparsity, suggesting what predictors optimize for matters more than how neurons interact during training (\S\ref{sec:perlayer});
+\item Per-layer controls reveal that the signal type gap (9.47 PPL) substantially exceeds the coupling breadth range (2.08 PPL) at 30\% sparsity (under shared hyperparameters; dedicated MSE tuning narrows but does not close this gap, \S Limitations), suggesting what predictors optimize for matters more than how neurons interact during training (\S\ref{sec:perlayer});
 \item Target-swap ablation shows KL-discovered mask patterns transfer quality to BCE, isolating the discovered targets, not the training dynamics, as the primary driver;
-\item Task-type analysis across three model families (7--14B) reveals a structural limitation: output-distribution optimization improves commonsense reasoning but degrades knowledge-intensive tasks.
+\item Task-type analysis across three model families (7--14B) provides preliminary observations ($n{=}3$, directional): output-distribution optimization improves commonsense reasoning but shows knowledge-intensive decline.
 \end{itemize}

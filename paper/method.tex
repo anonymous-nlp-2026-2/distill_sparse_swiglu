@@ -35,13 +35,13 @@ f_\theta^{(\ell)}(\mathbf{x}^{(\ell)}) = \text{GELU}(\mathbf{x}^{(\ell)} \mathbf
 \label{eq:predictor}
 \end{align}
 where $\mathbf{W}_1^{(\ell)} \in \mathbb{R}^{d \times d_b}$ and $\mathbf{W}_2^{(\ell)} \in \mathbb{R}^{d_b \times d_{\text{ff}}}$ with bottleneck dimension $d_b{=}128$.
-The predictor takes $\mathbf{x}^{(\ell)}$ (the hidden state after attention, before the FFN) as input, since this representation already encodes the token's contextual dependencies from self-attention and thus provides the information needed to predict which FFN neurons will be important.
+The predictor takes $\mathbf{x}^{(\ell)}$ (the post-attention hidden state) as input, since it already encodes the token's contextual dependencies from self-attention.
 The output is $d_{\text{ff}}$-dimensional logits $\mathbf{s}^{(\ell)}$, from which the mask is derived.
 
-The bottleneck $d_b{=}128$ ($0.9\%$ of $d_{\text{ff}}$) balances expressiveness against overhead: sweeps over $d_b \in \{64, 128, 256\}$ show diminishing returns beyond 128, with $d_b{=}256$ adding 2$\times$ parameters for $<$0.1pp PPL gain (Appendix~\ref{app:db_sensitivity}).
+Sweeps over $d_b \in \{64, 128, 256\}$ show diminishing returns beyond 128, with $d_b{=}256$ adding 2$\times$ parameters for $<$0.1pp PPL gain (Appendix~\ref{app:db_sensitivity}).
 We use GELU rather than ReLU to avoid dead predictor neurons during the early exploration phase when Gumbel noise dominates.
 Each predictor has $(4096 \times 128) + (128 \times 14336) = 2.37\text{M}$ parameters; with 32 independent predictors (one per layer), the total overhead is 75.9M, less than 1\% of the 8B base.
-The per-layer independence is a deliberate design choice: cross-layer communication at inference would add sequential latency, and the $K$-curve analysis (\S\ref{sec:perlayer}) confirms that cross-layer gradient coupling during training provides modest benefit beyond the output-distribution signal itself.
+Per-layer independence avoids sequential latency at inference; the $K$-curve analysis (\S\ref{sec:perlayer}) confirms that cross-layer coupling during training provides modest benefit beyond the output-distribution signal.
 
 
 \subsection{Gumbel-Sigmoid Relaxation}
@@ -63,7 +63,7 @@ As temperature decreases, the mask concentrates on confident decisions, approxim
 
 \paragraph{Comparison with Straight-Through Estimation.}
 The straight-through estimator (STE)~\cite{bengio2013ste} applies a hard threshold in the forward pass and passes gradients through unchanged ($\partial m / \partial s = 1$).
-In our setting, STE produces discontinuous gradient signals: small parameter changes can flip many neurons simultaneously. The resulting oscillations in the penalty weight prevent convergence to the target sparsity.
+In our setting, STE produces discontinuous gradient signals: small parameter changes can flip many neurons simultaneously, destabilizing sparsity enforcement (actual 20.8\% at 30\% target).
 Gumbel relaxation eliminates this pathology and contributes a 25.2\% improvement (PPL 15.77 $\to$ 11.79 at 50\% sparsity), as we verify empirically in \S\ref{sec:experiments}.
 
 
@@ -80,9 +80,9 @@ where $p_{\text{dense}} = \text{softmax}(\mathbf{z}_{\text{dense}})$ and $p_{\te
 The base model is frozen; only the predictor parameters receive gradients.
 
 We use forward KL (mass-covering) rather than reverse KL, as the goal is to preserve the dense model's primary predictions rather than explore alternative modes.
-In sparsity prediction, mode-covering is critical: false negatives (omitting a rarely but critically active neuron) cascade through downstream layers under global allocation, whereas false positives merely waste capacity; reverse KL's mode-seeking concentrates on high-probability neurons and risks missing compositionally important activations~\cite{wu2025rethinking}.
-\S\ref{sec:experiments} validates this choice empirically: forward KL outperforms reverse KL by 7.9\% and Jensen--Shannon divergence (JSD) by 6.0\% (at 50\% sparsity; the gap narrows at 30\%; Table~\ref{tab:ablation}).
-No temperature scaling ($T{=}1$) is applied~\cite{hinton2015distilling}; we distinguish $T$ from the Gumbel temperature $\tau$ (\S\ref{sec:method:gumbel}), which controls mask sharpness rather than logit scaling.
+In sparsity prediction, mode-covering is critical: false negatives (omitting a rarely but critically active neuron) cascade through downstream layers under global allocation, whereas false positives merely waste capacity~\cite{wu2025rethinking}.
+Forward KL outperforms reverse KL by 7.9\% and JSD by 6.0\% at 50\% (Table~\ref{tab:ablation}).
+No temperature scaling ($T{=}1$) is applied~\cite{hinton2015distilling}.
 
 
 \subsection{Geometric Penalty Schedule}
@@ -93,29 +93,45 @@ We enforce a model-level sparsity target $\rho$ via constrained optimization wit
 \min_\theta \; \mathcal{L}_{\text{KL}} \quad \text{s.t.} \quad \bar{s} = 1 - \rho.
 \label{eq:constrained}
 \end{align}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{lagrangian_dynamics.pdf}
+\vspace{-8pt}
+\caption{Geometric penalty schedule dynamics for 30\% sparsity target ($\lambda_{\max}{=}5000$). Left axis (log): $\lambda$ rises via geometric doubling once sparsity undershoots the target, saturating at its cap. Right axis: actual sparsity converges from natural density (${\approx}$0.41) toward 0.28.}
+\label{fig:lagrangian_dynamics}
+\vspace{-8pt}
+\end{figure}
+
 We relax this via a geometric penalty schedule:
 \begin{align}
 \mathcal{L} = \mathcal{L}_{\text{KL}} + \lambda \!\cdot\! \text{clamp}(|\bar{s} {-} (1{-}\rho)| {-} \epsilon,\, 0)^2,
 \label{eq:lagrangian}
 \end{align}
-where $\epsilon = 0.02$ is a deadzone margin that suppresses oscillation near the target (sensitivity in Appendix~\ref{app:lagrangian}). The penalty weight $\lambda$ is updated via geometric doubling (doubled when sparsity exceeds target, halved otherwise), clamped to $[\lambda_{\text{floor}}, \lambda_{\max}]$, reaching target sparsity within 40--110 steps across all tested regimes.
+where $\epsilon = 0.02$ is a deadzone margin that suppresses oscillation near the target (sensitivity in Appendix~\ref{app:lagrangian}). The penalty weight $\lambda$ is updated via geometric doubling (doubled when sparsity exceeds target, halved otherwise), clamped to $[\lambda_{\text{floor}}, \lambda_{\max}]$, reaching target sparsity within 40--110 steps across all tested regimes (Figure~\ref{fig:lagrangian_dynamics}).
 This schedule avoids the instability of fixed-$\lambda$ training: too low permits unconstrained masks; too high collapses the predictor to trivial uniform scores.
 The deadzone $\epsilon$ is essential---without it, the penalty oscillates around the target and interferes with KL minimization during the critical Gumbel annealing phase (Appendix~\ref{app:lagrangian}).
-
 
 \subsection{Gradient Analysis: BCE vs.\ KL}
 \label{sec:method:gradient}
 
-We contrast the gradient structure of BCE and KL to build intuition for how KL discovers divergent mask patterns (\S\ref{sec:mask_analysis}). This analysis is suggestive; empirical evidence in \S\ref{sec:mask_analysis} shows KL-discovered mask targets drive inference quality.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{snr_trajectory.pdf}
+\vspace{-8pt}
+\caption{Gradient SNR trajectory across 1000 training steps. BCE (orange) maintains consistently higher SNR than KL (blue) from step 100 onward ($2.3$--$17\times$), yet KL produces superior masks (Table~\ref{tab:main}), confirming that target alignment matters more than gradient clarity.}
+\label{fig:snr_trajectory}
+\vspace{-8pt}
+\end{figure}
+
+We contrast the gradient structure of BCE and KL to build intuition for how KL discovers divergent mask patterns (\S\ref{sec:mask_analysis}).
 
 Under BCE, the predictor trains against oracle masks $m_j^* = \mathbf{1}[|g_j| \geq \text{top-}k\text{ threshold}]$ derived from activation magnitudes.
 The gradient $\partial \mathcal{L}_{\text{BCE}} / \partial s_j = \sigma(s_j) - m_j^*$ depends only on neuron $j$; each neuron is trained independently with no inter-neuron coupling.
-Under output-distribution KL, the chain rule introduces a downstream Jacobian $\partial \mathbf{z}_{\text{sparse}} / \partial \tilde{m}_j^{(\ell)}$ that couples neuron $j$'s gradient to all other retained neurons in layers $\ell$ through $L$, because the sparse hidden state propagates through subsequent attention and FFN operations.
-This coupling allows KL to evaluate each neuron's importance in the context of the full sparse computation, rather than against a fixed magnitude target.
+Under output-distribution KL, the chain rule introduces a downstream Jacobian that couples neuron $j$'s gradient to all other retained neurons in layers $\ell$ through $L$, evaluating each neuron in the context of the full sparse computation.
 
-Gradient signal-to-noise ratio (SNR) measurements\footnote{$\text{SNR}_\ell = \|\mathbb{E}[\nabla_{\theta_\ell} \mathcal{L}]\|_2^2 / \text{Var}[\nabla_{\theta_\ell} \mathcal{L}]$, expectation over mini-batches.} reveal that BCE maintains consistently higher SNR than KL throughout training ($2.3\times$ at convergence; Figure~\ref{fig:snr_trajectory}; extended analysis in Appendix~\ref{app:snr_extended}), indicating that KL's quality advantage does not arise from cleaner gradient signals.
-Rather, KL's end-to-end coupled gradient serves as a \emph{search mechanism} that discovers compositionally superior mask patterns, even when the per-step signal is noisier than BCE's decomposed updates.
-The target-swap ablation in \S\ref{sec:mask_analysis} suggests that the discovered mask targets, not the coupling mechanism itself, drive inference-stage quality.
+Gradient SNR measurements\footnote{$\text{SNR}_\ell = \|\mathbb{E}[\nabla_{\theta_\ell} \mathcal{L}]\|_2^2 / \text{Var}[\nabla_{\theta_\ell} \mathcal{L}]$, expectation over mini-batches.} reveal that BCE maintains consistently higher SNR than KL throughout training ($2.3\times$ at convergence; Figure~\ref{fig:snr_trajectory}; Appendix~\ref{app:snr_extended}), indicating KL's advantage stems not from gradient clarity but from discovering superior mask patterns via end-to-end search.
+The target-swap ablation in \S\ref{sec:mask_analysis} confirms that the discovered mask targets, not the coupling mechanism itself, drive inference-stage quality.
 
 \subsection{Two-Dimensional Taxonomy of Sparsity Prediction Methods}
 \label{sec:method:taxonomy}
@@ -138,6 +154,5 @@ Per-token & DejaVu, FastForward & ShadowLLM, D2DMoE & \textbf{Ours} \\
 \end{table}
 
 Our method combines per-token prediction with coupled KL training (Table~\ref{tab:taxonomy}).
-KL on output logits directly optimizes next-token prediction loss, which composes across layers; per-layer mean squared error (MSE) does not: a mask minimizing FFN output error at layer $\ell$ may amplify errors in layers $\ell{+}1 \ldots L$, explaining its $1.7\times$/$9.6\times$ worse PPL than TEAL at 30\%/50\% (50\%: s42 only; \S\ref{sec:experiments}). % exp_id: mse30_uniform_s42, mse50_uniform_s42
-Full taxonomy discussion in Appendix~\ref{app:taxonomy}.
+KL on output logits directly optimizes next-token prediction loss, which composes across layers; per-layer MSE does not: a mask minimizing FFN output error at layer $\ell$ may amplify errors in layers $\ell{+}1 \ldots L$, explaining its $1.7\times$/$9.6\times$ worse PPL (Appendix~\ref{app:taxonomy}).
 
